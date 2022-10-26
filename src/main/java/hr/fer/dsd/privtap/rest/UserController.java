@@ -15,8 +15,14 @@ public class UserController {
 
     private final UserService service;
 
+    @GetMapping("/demo")
+    public String demo(){
+        return "Ovo je s BE!";
+    }
+
+
     @GetMapping("/{userId}")
-    public UserResponse getById(@PathVariable @NotNull Long userId) {
+    public UserResponse getById(@PathVariable @NotNull String userId) {
         return service.getById(userId)
                 .orElse(null);
     }
@@ -25,5 +31,7 @@ public class UserController {
     public UserResponse save(@RequestBody @NotNull UserRequest request) {
         return service.save(request);
     }
+
+
 
 }

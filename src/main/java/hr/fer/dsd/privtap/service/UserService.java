@@ -23,7 +23,7 @@ public class UserService {
         return convert(user);
     }
 
-    public Optional<UserResponse> getById(Long id) {
+    public Optional<UserResponse> getById(String id) {
         return repository.findById(id).map(this::convert);
     }
 
@@ -41,7 +41,7 @@ public class UserService {
         );
     }
 
-    private Optional<User> findById(Long id) {
+    private Optional<User> findById(String id) {
         return repository.findById(id);
     }
 
