@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  app:
+    image: "privtap"
+    build:
+      context: .
+    container_name: privtap
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    ports:
+      - "8080:8080"
