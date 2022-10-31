@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -17,27 +19,27 @@ public class UserService {
 
     private final UserRepository repository;
 
-
-    public UserResponse save(UserRequest request) {
-        var user = request.getId() != null ? update(request) : create(request);
-        return convert(user);
+    public void registerUser(UserRequest request) {
+        if(findByEmail(request.getEmail()).isEmpty())
+            create(request);
     }
+
 
     public Optional<UserResponse> getById(String id) {
         return repository.findById(id).map(this::convert);
     }
 
-    private User update(UserRequest request) {
-        var user = findById(request.getId()).get();
+    public UserResponse update(UserRequest request) {
+        var user = findByEmail(request.getEmail()).get();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        return repository.save(user);
+        repository.save(user);
+        return convert(user);
     }
 
     private User create(UserRequest request) {
         return repository.save(
-                new User(null, request.getUsername(), request.getEmail(), request.getPassword())
+                new User(null, request.getUsername(), request.getEmail())
         );
     }
 
@@ -45,8 +47,19 @@ public class UserService {
         return repository.findById(id);
     }
 
+    private Optional<User> findByEmail(String email) {
+        return repository.findByEmail(email);
+    }
+
+
     private UserResponse convert(User user) {
         return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
     }
 
+    public List<UserResponse> getAllUsers() {
+        List<UserResponse> response=new ArrayList<UserResponse>();
+        for(User u : repository.findAll())
+            response.add(convert(u));
+        return response;
+    }
 }
