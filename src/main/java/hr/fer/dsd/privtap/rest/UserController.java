@@ -4,22 +4,35 @@ import hr.fer.dsd.privtap.model.user.UserRequest;
 import hr.fer.dsd.privtap.model.user.UserResponse;
 import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/")
 public class UserController {
 
     private final UserService service;
 
-    @GetMapping("/demo")
-    public String demo(){
-        return "Ovo je s BE!";
+    @GetMapping("/")
+    public String home() {
+        return "Home page!";
     }
 
+    @GetMapping("/loginSuccess")
+    public String loginSuccess(OAuth2AuthenticationToken authentication) {
+        var response = authentication.getPrincipal().getAttributes();
+        service.registerUser(new UserRequest(response.get("name").toString(), response.get("email").toString()));
+        return "loginSuccess" + response.toString();
+    }
+
+    @GetMapping("/loginFailure")
+    public String loginFailure() {
+        return "loginFailure";
+    }
 
     @GetMapping("/{userId}")
     public UserResponse getById(@PathVariable @NotNull String userId) {
@@ -28,10 +41,14 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public UserResponse save(@RequestBody @NotNull UserRequest request) {
-        return service.save(request);
+    public UserResponse update(@RequestBody @NotNull UserRequest request) {
+        return service.update(request);
     }
 
+    @GetMapping("/all")
+    public List<UserResponse> fetchAllUsers(){
+        return service.getAllUsers();
+    }
 
 
 }
