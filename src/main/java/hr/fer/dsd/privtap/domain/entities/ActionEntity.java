@@ -1,6 +1,6 @@
 package hr.fer.dsd.privtap.domain.entities;
 
-import hr.fer.dsd.privtap.model.user.requestField.RequestField;
+import hr.fer.dsd.privtap.model.requestField.RequestField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +13,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "triggers")
-public class Trigger {
+@Document(collection = "actions")
+public class ActionEntity {
 
     @Id
     private String id;
@@ -23,5 +23,4 @@ public class Trigger {
     private List<RequestField> fields;
     private Instant createdAt;
     private Instant updatedAt;
-
 }

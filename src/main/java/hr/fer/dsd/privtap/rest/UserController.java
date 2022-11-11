@@ -26,7 +26,7 @@ public class UserController {
     public String loginSuccess(OAuth2AuthenticationToken authentication) {
         var response = authentication.getPrincipal().getAttributes();
         service.registerUser(new UserRequest(response.get("name").toString(), response.get("email").toString()));
-        return "loginSuccess" + response.toString();
+        return "loginSuccess" + response;
     }
 
     @GetMapping("/loginFailure")
