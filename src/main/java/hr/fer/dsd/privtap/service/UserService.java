@@ -36,10 +36,7 @@ public class UserService {
     }
 
     public User getById(String id) {
-        var e=repository.findById(id).orElseThrow(NoSuchElementException::new);
-        e.setAutomations(new HashSet<>());
-        return UserMapper.INSTANCE.fromEntity(e);
-
+        return UserMapper.INSTANCE.fromEntity(repository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 
     public List<User> getAllUsers() {
