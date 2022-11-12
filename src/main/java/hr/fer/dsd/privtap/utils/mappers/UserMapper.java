@@ -1,7 +1,7 @@
 package hr.fer.dsd.privtap.utils.mappers;
 
-import hr.fer.dsd.privtap.domain.entities.TriggerEntity;
-import hr.fer.dsd.privtap.model.trigger.Trigger;
+import hr.fer.dsd.privtap.domain.entities.UserEntity;
+import hr.fer.dsd.privtap.model.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValueCheckStrategy;
@@ -9,12 +9,14 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
-public interface TriggerMapper {
-    TriggerMapper INSTANCE = Mappers.getMapper(TriggerMapper.class);
 
-    Trigger fromEntity(TriggerEntity entity);
+public interface UserMapper {
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    TriggerEntity toEntity(Trigger model);
+    User fromEntity(UserEntity entity);
 
-    TriggerEntity updateEntity(@MappingTarget TriggerEntity entity, Trigger trigger);
+    UserEntity toEntity(User model);
+
+    UserEntity updateEntity(@MappingTarget UserEntity entity, User user);
+
 }

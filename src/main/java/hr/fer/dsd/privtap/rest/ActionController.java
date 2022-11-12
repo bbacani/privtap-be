@@ -5,6 +5,7 @@ import hr.fer.dsd.privtap.service.ActionService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,7 +27,7 @@ public class ActionController {
     }
 
     @GetMapping("/{actionId}")
-    public Action getAction(@PathVariable String actionId) {
+    public Action getAction(@PathVariable @NotNull String actionId) {
         return service.get(actionId);
     }
 

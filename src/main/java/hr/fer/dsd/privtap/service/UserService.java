@@ -1,15 +1,17 @@
 package hr.fer.dsd.privtap.service;
 
-import hr.fer.dsd.privtap.domain.entities.UserEntity;
 import hr.fer.dsd.privtap.domain.repositories.UserRepository;
-import hr.fer.dsd.privtap.model.user.UserRequest;
-import hr.fer.dsd.privtap.model.user.UserResponse;
+import hr.fer.dsd.privtap.model.automation.Automation;
+import hr.fer.dsd.privtap.model.automation.AutomationRequest;
+import hr.fer.dsd.privtap.model.user.User;
+import hr.fer.dsd.privtap.utils.mappers.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 
 @Service
@@ -17,43 +19,53 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository repository;
+    private final ActionService actionService;
+    private final TriggerService triggerService;
 
-    public void registerUser(UserRequest request) {
-        if (findByEmail(request.getEmail()).isEmpty())
-            create(request);
+    public void registerUser(User user) {
+        if (!repository.existsByEmail(user.getEmail()))
+            create(user);
     }
 
-    public Optional<UserResponse> getById(String id) {
-        return repository.findById(id).map(this::convert);
+    public User update(User user) {
+        var entity = repository.findById(user.getId()).orElseThrow(NoSuchElementException::new);
+        var updatedEntity = UserMapper.INSTANCE.updateEntity(entity, user);
+
+        repository.save(updatedEntity);
+        return UserMapper.INSTANCE.fromEntity(updatedEntity);
     }
 
-    public UserResponse update(UserRequest request) {
-        var user = findByEmail(request.getEmail()).get();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        repository.save(user);
-        return convert(user);
+    public User getById(String id) {
+        var e=repository.findById(id).orElseThrow(NoSuchElementException::new);
+        e.setAutomations(new HashSet<>());
+        return UserMapper.INSTANCE.fromEntity(e);
+
     }
 
-    public List<UserResponse> getAllUsers() {
-        List<UserResponse> response = new ArrayList<UserResponse>();
-        for (UserEntity u : repository.findAll())
-            response.add(convert(u));
-        return response;
+    public List<User> getAllUsers() {
+        return repository.findAll().stream().map(UserMapper.INSTANCE::fromEntity).toList();
     }
 
-    private UserEntity create(UserRequest request) {
-        return repository.save(
-                new UserEntity(null, request.getUsername(), request.getEmail())
-        );
+    private void create(User user) {
+        var entity = UserMapper.INSTANCE.toEntity(user);
+        entity.setAutomations(new HashSet<>());
+        repository.save(entity);
     }
 
-    private Optional<UserEntity> findByEmail(String email) {
-        return repository.findByEmail(email);
-    }
+    public User registerAutomation(String userId, AutomationRequest request) {
+        var action = actionService.get(request.getActionId());
+        var trigger = triggerService.get(request.getTriggerId());
+        var user = getById(userId);
 
-    private UserResponse convert(UserEntity userEntity) {
-        return new UserResponse(userEntity.getId(), userEntity.getUsername(), userEntity.getEmail());
-    }
+        var automation = Automation.builder()
+                .id(UUID.randomUUID().toString())
+                .name(request.getName())
+                .description(request.getDescription())
+                .action(action)
+                .trigger(trigger)
+                .build();
 
+        user.getAutomations().add(automation);
+        return user;
+    }
 }

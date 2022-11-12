@@ -5,6 +5,7 @@ import hr.fer.dsd.privtap.service.TriggerService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
@@ -20,13 +21,13 @@ public class TriggerController {
     }
 
     @PatchMapping("/{triggerId}")
-    public Trigger updateTrigger(@PathVariable String triggerId, @RequestBody Trigger trigger) {
+    public Trigger updateTrigger(@PathVariable @NotNull String triggerId, @RequestBody Trigger trigger) {
         trigger.setId(triggerId);
         return service.update(trigger);
     }
 
     @GetMapping("/{triggerId}")
-    public Trigger getTrigger(@PathVariable String triggerId) {
+    public Trigger getTrigger(@PathVariable @NotNull String triggerId) {
         return service.get(triggerId);
     }
 
