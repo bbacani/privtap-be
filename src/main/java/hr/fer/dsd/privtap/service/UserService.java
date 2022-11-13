@@ -63,6 +63,8 @@ public class UserService {
                 .build();
 
         user.getAutomations().add(automation);
+        var entity = UserMapper.INSTANCE.toEntity(user);
+        repository.save(entity);
         return user;
     }
 }
