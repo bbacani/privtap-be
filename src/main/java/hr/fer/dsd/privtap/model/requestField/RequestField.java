@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestField {
+public abstract class RequestField {
     private String name;
     private Object value;
 }
