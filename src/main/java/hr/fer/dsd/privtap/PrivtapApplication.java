@@ -11,4 +11,5 @@ public class PrivtapApplication {
     public static void main(String[] args) {
         SpringApplication.run(PrivtapApplication.class, args);
     }
+
 }
