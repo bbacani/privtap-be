@@ -1,7 +1,7 @@
 package hr.fer.dsd.privtap.rest;
 
-import hr.fer.dsd.privtap.model.user.UserRequest;
-import hr.fer.dsd.privtap.model.user.UserResponse;
+import hr.fer.dsd.privtap.model.automation.AutomationRequest;
+import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -25,8 +25,8 @@ public class UserController {
     @GetMapping("/loginSuccess")
     public String loginSuccess(OAuth2AuthenticationToken authentication) {
         var response = authentication.getPrincipal().getAttributes();
-        service.registerUser(new UserRequest(response.get("name").toString(), response.get("email").toString()));
-        return "loginSuccess" + response.toString();
+        service.registerUser(new User(null, response.get("name").toString(), response.get("email").toString(), null));
+        return "loginSuccess";
     }
 
     @GetMapping("/loginFailure")
@@ -35,20 +35,23 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserResponse getById(@PathVariable @NotNull String userId) {
-        return service.getById(userId)
-                .orElse(null);
+    public User getById(@PathVariable @NotNull String userId) {
+        return service.getById(userId);
     }
 
-    @PostMapping("/")
-    public UserResponse update(@RequestBody @NotNull UserRequest request) {
-        return service.update(request);
+    @PatchMapping("/")
+    public User update(@RequestBody @NotNull User user) {
+        return service.update(user);
     }
 
     @GetMapping("/all")
-    public List<UserResponse> fetchAllUsers(){
+    public List<User> fetchAllUsers() {
         return service.getAllUsers();
     }
 
+    @PostMapping("/automation/{userId}")
+    public User registerAutomation(@PathVariable @NotNull String userId, @RequestBody AutomationRequest request) {
+        return service.registerAutomation(userId, request);
+    }
 
 }

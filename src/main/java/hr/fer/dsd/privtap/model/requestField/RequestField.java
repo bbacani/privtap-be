@@ -1,4 +1,4 @@
-package hr.fer.dsd.privtap.model.user;
+package hr.fer.dsd.privtap.model.requestField;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequest {
-    private String username;
-    private String email;
+public class RequestField {
+    private String name;
+    private Object value;
 }
