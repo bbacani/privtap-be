@@ -24,9 +24,9 @@ public class UserController {
 
     @GetMapping("/loginSuccess")
     public String loginSuccess(OAuth2AuthenticationToken authentication) {
-        var response = authentication.getPrincipal().getAttributes();
-        service.registerUser(new User(null, response.get("name").toString(), response.get("email").toString(), null));
-        return "loginSuccess";
+      //  var response = authentication.getPrincipal().getAttributes();
+      //  service.registerUser(new User(null, response.get("name").toString(), response.get("email").toString(), null));
+        return "loginSuccess jeeeej";
     }
 
     @GetMapping("/loginFailure")
@@ -34,7 +34,7 @@ public class UserController {
         return "loginFailure";
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public User getById(@PathVariable @NotNull String userId) {
         return service.getById(userId);
     }

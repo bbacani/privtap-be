@@ -43,10 +43,11 @@ public class UserService {
         return repository.findAll().stream().map(UserMapper.INSTANCE::fromEntity).toList();
     }
 
-    private void create(User user) {
+    private User create(User user) {
         var entity = UserMapper.INSTANCE.toEntity(user);
         entity.setAutomations(new HashSet<>());
-        repository.save(entity);
+        var savedEntity=repository.save(entity);
+        return UserMapper.INSTANCE.fromEntity(savedEntity);
     }
 
     public User registerAutomation(String userId, AutomationRequest request) {
