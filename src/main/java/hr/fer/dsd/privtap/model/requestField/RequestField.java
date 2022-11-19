@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.model.requestField;
 
+
 import lombok.Data;
 
 @Data

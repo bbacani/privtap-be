@@ -8,10 +8,7 @@ import hr.fer.dsd.privtap.utils.mappers.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -19,8 +16,8 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository repository;
-    private final ActionService actionService;
-    private final TriggerService triggerService;
+    private final ActionTypeService actionTypeService;
+    private final TriggerTypeService triggerTypeService;
 
     public void registerUser(User user) {
         if (!repository.existsByEmail(user.getEmail()))
@@ -50,21 +47,26 @@ public class UserService {
     }
 
     public User registerAutomation(String userId, AutomationRequest request) {
-        var action = actionService.get(request.getActionId());
-        var trigger = triggerService.get(request.getTriggerId());
+        var action = actionTypeService.get(request.getActionTypeId());
+        var trigger = triggerTypeService.get(request.getTriggerTypeId());
         var user = getById(userId);
 
         var automation = Automation.builder()
                 .id(UUID.randomUUID().toString())
                 .name(request.getName())
                 .description(request.getDescription())
-                .action(action)
-                .trigger(trigger)
+                .actionType(action)
+                .triggerType(trigger)
                 .build();
 
         user.getAutomations().add(automation);
         var entity = UserMapper.INSTANCE.toEntity(user);
         repository.save(entity);
         return user;
+    }
+
+    public Set<Automation> getAutomationByUser(String userId){
+        var user = getById(userId);
+        return user.getAutomations();
     }
 }
