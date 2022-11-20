@@ -1,15 +1,16 @@
 package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.repositories.TriggerRepository;
-import hr.fer.dsd.privtap.domain.repositories.TriggerTypeRepository;
+import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import hr.fer.dsd.privtap.model.trigger.Trigger;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.utils.mappers.TriggerMapper;
-import hr.fer.dsd.privtap.utils.mappers.TriggerTypeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -53,7 +54,26 @@ public class TriggerService {
     public List<String> findUserIds(String typeId){
         return filterByType(typeId).stream().map(t -> t.getUserId()).collect(Collectors.toList());
     }
+    public boolean existsByTypeIdAndUserId(String typeId, String userId){return triggerRepository.existsByTypeIdAndUserId(typeId,userId);}
 
+    public Trigger createFromType(TriggerType triggerType, String userId){
+        var fieldsList = new ArrayList<RequestField>();
+        for(var fieldName : triggerType.getRequestFieldsNames()){
+            try{ var field = fieldName.getRelatedClass().getConstructor(RequestFieldName.class, Object.class).newInstance(fieldName,null);
+                fieldsList.add((RequestField) field);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        Trigger trigger = Trigger.builder()
+                .userId(userId)
+                .name(triggerType.getName())
+                .typeId(triggerType.getId())
+                .description(triggerType.getDescription())
+                .fields(fieldsList).build();
+
+        return activateTrigger(trigger);
+    }
 }
 
 

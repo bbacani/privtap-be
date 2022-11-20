@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ActionRepository extends MongoRepository<ActionEntity, String> {
 
     Optional<ActionEntity> findByTypeIdAndUserId(String typeId, String userId);
+    boolean existsByTypeIdAndUserId(String typeId, String userId);
 }

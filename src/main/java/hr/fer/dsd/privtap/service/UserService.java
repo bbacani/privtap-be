@@ -15,41 +15,49 @@ import java.util.*;
 @AllArgsConstructor
 public class UserService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+
     private final ActionTypeService actionTypeService;
     private final TriggerTypeService triggerTypeService;
+    private final ActionService actionService;
+    private final TriggerService triggerService;
 
     public void registerUser(User user) {
-        if (!repository.existsByEmail(user.getEmail()))
+        if (!userRepository.existsByEmail(user.getEmail()))
             create(user);
     }
 
     public User update(User user) {
-        var entity = repository.findById(user.getId()).orElseThrow(NoSuchElementException::new);
+        var entity = userRepository.findById(user.getId()).orElseThrow(NoSuchElementException::new);
         var updatedEntity = UserMapper.INSTANCE.updateEntity(entity, user);
 
-        repository.save(updatedEntity);
+        userRepository.save(updatedEntity);
         return UserMapper.INSTANCE.fromEntity(updatedEntity);
     }
 
     public User getById(String id) {
-        return UserMapper.INSTANCE.fromEntity(repository.findById(id).orElseThrow(NoSuchElementException::new));
+        return UserMapper.INSTANCE.fromEntity(userRepository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 
     public List<User> getAllUsers() {
-        return repository.findAll().stream().map(UserMapper.INSTANCE::fromEntity).toList();
+        return userRepository.findAll().stream().map(UserMapper.INSTANCE::fromEntity).toList();
     }
 
     private void create(User user) {
         var entity = UserMapper.INSTANCE.toEntity(user);
         entity.setAutomations(new HashSet<>());
-        repository.save(entity);
+        userRepository.save(entity);
     }
 
     public User registerAutomation(String userId, AutomationRequest request) {
         var action = actionTypeService.get(request.getActionTypeId());
         var trigger = triggerTypeService.get(request.getTriggerTypeId());
         var user = getById(userId);
+
+       if(!actionService.existsByTypeIdAndUserId(action.getId(),userId))
+            actionService.createFromType(action,userId);
+        if(!triggerService.existsByTypeIdAndUserId(trigger.getId(),userId))
+            triggerService.createFromType(trigger,userId);
 
         var automation = Automation.builder()
                 .id(UUID.randomUUID().toString())
@@ -61,7 +69,7 @@ public class UserService {
 
         user.getAutomations().add(automation);
         var entity = UserMapper.INSTANCE.toEntity(user);
-        repository.save(entity);
+        userRepository.save(entity);
         return user;
     }
 

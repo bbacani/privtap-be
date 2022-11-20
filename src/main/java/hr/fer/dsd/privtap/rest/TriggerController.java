@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -18,10 +17,8 @@ public class TriggerController {
     private final TriggerService service;
     private final TriggerPublisher publisher;
 
-
     @PostMapping
     public Trigger registerTrigger(@RequestBody Trigger trigger) {
-        System.out.println(trigger.getFields());
         return service.activateTrigger(trigger);
     }
 
@@ -50,5 +47,4 @@ public class TriggerController {
             }
         else  publisher.publishTrigger(trigger);
     }
-
 }

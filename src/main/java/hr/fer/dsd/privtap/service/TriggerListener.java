@@ -1,7 +1,5 @@
 package hr.fer.dsd.privtap.service;
 
-import hr.fer.dsd.privtap.model.action.Action;
-import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.trigger.TriggerEvent;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -20,6 +18,7 @@ public class TriggerListener {
     @EventListener
     public void onApplicationEvent(TriggerEvent event){
         var userId = event.getTrigger().getUserId();
+        System.out.println("trigger occured");
         var automations = userService.getAutomationByUser(userId);
         automations = automations
                 .stream()

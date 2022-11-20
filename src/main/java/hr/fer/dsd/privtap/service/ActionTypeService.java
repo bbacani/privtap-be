@@ -6,6 +6,7 @@ import hr.fer.dsd.privtap.utils.mappers.ActionTypeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -17,7 +18,8 @@ public class ActionTypeService {
 
     public ActionType create(ActionType action) {
         var entity = ActionTypeMapper.INSTANCE.toEntity(action);
-
+        entity.setCreatedAt(Instant.now());
+        entity.setUpdatedAt(Instant.now());
         var savedEntity = actionTypeRepository.save(entity);
         return ActionTypeMapper.INSTANCE.fromEntity(savedEntity);
     }

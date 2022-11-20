@@ -14,7 +14,6 @@ public class TriggerPublisher {
     ApplicationEventPublisher applicationEventPublisher;
 
     public void publishTrigger(Trigger trigger){
-        System.out.println("new trigger "+ trigger.getId());
         applicationEventPublisher.publishEvent(new TriggerEvent(this,trigger));
     }
 }

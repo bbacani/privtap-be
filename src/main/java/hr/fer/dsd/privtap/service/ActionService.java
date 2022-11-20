@@ -1,15 +1,16 @@
 package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.repositories.ActionRepository;
-import hr.fer.dsd.privtap.domain.repositories.ActionTypeRepository;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import hr.fer.dsd.privtap.utils.mappers.ActionMapper;
-import hr.fer.dsd.privtap.utils.mappers.ActionTypeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -48,6 +49,28 @@ public class ActionService {
     public Action getByTypeAndUser(String actionType, String userId){
         return ActionMapper.INSTANCE.fromEntity(actionRepository.findByTypeIdAndUserId(actionType,userId).orElseThrow(NoSuchElementException::new));
     }
+
+    public Action createFromType(ActionType actionType,String userId){
+        var fieldsList = new ArrayList<RequestField>();
+        for(var fieldName : actionType.getRequestFieldsNames()){
+            try{ var field = fieldName.getRelatedClass().getConstructor(RequestFieldName.class, Object.class).newInstance(fieldName,null);
+            fieldsList.add((RequestField) field);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        Action action = Action.builder()
+                .userId(userId)
+                .name(actionType.getName())
+                .typeId(actionType.getId())
+                .description(actionType.getDescription())
+                .fields(fieldsList).build();
+
+        return create(action);
+    }
+
+
+    public boolean existsByTypeIdAndUserId(String typeId, String userId){return actionRepository.existsByTypeIdAndUserId(typeId,userId);  }
 
 
 }
