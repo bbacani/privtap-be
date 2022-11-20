@@ -12,22 +12,22 @@ public enum RequestFieldName {
 
     date, image, location, content, description, title, userinfo;
 
-    public Class getRelatedClass() {
+    public Object getRelatedClass() {
         switch (this) {
             case date:
-                return Date.class;
+                return new Date();
             case content:
-                return Content.class;
+                return new Content();
             case image:
-                return Image.class;
+                return new Image();
             case description:
-                return Description.class;
+                return new Description();
             case location:
-                return Location.class;
+                return new Location();
             case title:
-                return Title.class;
+                return new Title();
             case userinfo:
-                return UserInfo.class;
+                return new UserInfo();
             default: return RequestField.class;
         }
     }

@@ -53,11 +53,8 @@ public class ActionService {
     public Action createFromType(ActionType actionType,String userId){
         var fieldsList = new ArrayList<RequestField>();
         for(var fieldName : actionType.getRequestFieldsNames()){
-            try{ var field = fieldName.getRelatedClass().getConstructor(RequestFieldName.class, Object.class).newInstance(fieldName,null);
-            fieldsList.add((RequestField) field);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
+            var field = ((RequestField)fieldName.getRelatedClass()).buildDefault(fieldName);
+            fieldsList.add( field);
         }
         Action action = Action.builder()
                 .userId(userId)

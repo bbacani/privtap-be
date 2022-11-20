@@ -1,6 +1,7 @@
 package hr.fer.dsd.privtap.model.requestField.userInfo;
 
 import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -20,5 +21,11 @@ public class UserInfo extends RequestField{
             this.lastName = lastName;
             this.email = email;
         }
+    }
+    public UserInfo buildDefault(RequestFieldName name){
+        var userinfo=new UserInfo();
+        userinfo.setName(name);
+        userinfo.setValue(null);
+        return userinfo;
     }
 }

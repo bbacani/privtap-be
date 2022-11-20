@@ -53,12 +53,10 @@ public class UserService {
         var action = actionTypeService.get(request.getActionTypeId());
         var trigger = triggerTypeService.get(request.getTriggerTypeId());
         var user = getById(userId);
-
        if(!actionService.existsByTypeIdAndUserId(action.getId(),userId))
             actionService.createFromType(action,userId);
         if(!triggerService.existsByTypeIdAndUserId(trigger.getId(),userId))
             triggerService.createFromType(trigger,userId);
-
         var automation = Automation.builder()
                 .id(UUID.randomUUID().toString())
                 .name(request.getName())
@@ -66,8 +64,11 @@ public class UserService {
                 .actionType(action)
                 .triggerType(trigger)
                 .build();
-
-        user.getAutomations().add(automation);
+        if(null!=user.getAutomations()) user.getAutomations().add(automation);
+        else { var set= new HashSet<Automation>();
+            set.add(automation);
+            user.setAutomations(set);
+        }
         var entity = UserMapper.INSTANCE.toEntity(user);
         userRepository.save(entity);
         return user;

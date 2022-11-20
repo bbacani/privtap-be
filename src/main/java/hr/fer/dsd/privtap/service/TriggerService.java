@@ -59,11 +59,8 @@ public class TriggerService {
     public Trigger createFromType(TriggerType triggerType, String userId){
         var fieldsList = new ArrayList<RequestField>();
         for(var fieldName : triggerType.getRequestFieldsNames()){
-            try{ var field = fieldName.getRelatedClass().getConstructor(RequestFieldName.class, Object.class).newInstance(fieldName,null);
-                fieldsList.add((RequestField) field);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
+            var field = ((RequestField)fieldName.getRelatedClass()).buildDefault(fieldName);
+            fieldsList.add( field);
         }
         Trigger trigger = Trigger.builder()
                 .userId(userId)

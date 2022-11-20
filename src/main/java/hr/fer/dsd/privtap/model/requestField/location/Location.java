@@ -1,6 +1,7 @@
 package hr.fer.dsd.privtap.model.requestField.location;
 
 import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,5 +18,12 @@ public class Location extends RequestField {
             this.latitude = latitude;
             this.longitude = longitude;
         }
+    }
+
+    public Location buildDefault(RequestFieldName name){
+        var location=new Location();
+        location.setName(name);
+        location.setValue(null);
+        return location;
     }
 }

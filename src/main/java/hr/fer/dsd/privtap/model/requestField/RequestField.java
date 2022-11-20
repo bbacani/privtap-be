@@ -26,4 +26,5 @@ import lombok.Data;
 public abstract class RequestField {
     private RequestFieldName name;
     private Object value;
+    public abstract RequestField buildDefault(RequestFieldName name);
 }
