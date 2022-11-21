@@ -1,5 +1,8 @@
 package hr.fer.dsd.privtap.config;
 
+import hr.fer.dsd.privtap.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import hr.fer.dsd.privtap.security.oauth2.OAuth2AuthenticationFailureHandler;
+import hr.fer.dsd.privtap.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,6 +26,15 @@ import java.io.IOException;
 @Configuration
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
+    }
 
 
     @Bean
@@ -40,35 +53,17 @@ public class WebSecurityConfig {
                 .oauth2Login()
                     .authorizationEndpoint()
                         .baseUri("/oauth2/authorize")
+                        .authorizationRequestRepository(cookieAuthorizationRequestRepository())
                         .and()
                     .redirectionEndpoint()
                         .baseUri("/oauth2/callback/*")
                         .and()
-                .successHandler(successHandler());
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler);
+
 
 
         return http.build();
-    }
-
-    private AuthenticationSuccessHandler successHandler() {
-        return new SimpleUrlAuthenticationSuccessHandler() {
-            private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-            public void onAuthenticationSuccess(HttpServletRequest request,
-                                                HttpServletResponse response, Authentication authentication)
-                    throws IOException {
-                HttpSession session = request.getSession(true);
-                session.setMaxInactiveInterval(60 * 180);
-                response.getWriter().println("LoginSuccessful");
-                response.addHeader("Access-Control-Allow-Origin",
-                        "http://localhost:3000, http://privtap-bucket.s3-website.eu-central-1.amazonaws.com/");
-                response.addHeader("Access-Control-Allow-Credentials", "true");
-
-
-                redirectStrategy.sendRedirect(request, response, "http://localhost:3000/oauth2/redirect");
-
-
-            }
-        };
     }
 
 }
