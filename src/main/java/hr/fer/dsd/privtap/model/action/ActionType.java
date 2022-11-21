@@ -1,6 +1,6 @@
 package hr.fer.dsd.privtap.model.action;
 
-import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,18 +8,15 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Action {
+public class ActionType {
     private String id;
-    private String userId;
     private String name;
-    private String typeId;
     private String description;
-    private List<RequestField> fields;
+    private List<RequestFieldName> requestFieldsNames;
     private Instant createdAt;
     private Instant updatedAt;
 }
