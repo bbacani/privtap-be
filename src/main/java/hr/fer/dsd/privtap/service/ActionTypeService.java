@@ -2,7 +2,9 @@ package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.repositories.ActionTypeRepository;
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.utils.mappers.ActionTypeMapper;
+import hr.fer.dsd.privtap.utils.mappers.TriggerTypeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,8 @@ public class ActionTypeService {
     public List<ActionType> getAll() {
         return actionTypeRepository.findAll().stream().map(ActionTypeMapper.INSTANCE::fromEntity).toList();
     }
-
+    public List<ActionType> getAllByPlatform(String platform){
+        return actionTypeRepository.findByPlatform(platform).stream().map(ActionTypeMapper.INSTANCE::fromEntity).toList();
+    }
 
 }

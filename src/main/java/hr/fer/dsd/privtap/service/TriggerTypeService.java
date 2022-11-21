@@ -44,6 +44,10 @@ public class TriggerTypeService {
         return repository.findAll().stream().map(TriggerTypeMapper.INSTANCE::fromEntity).toList();
     }
 
+    public List<TriggerType> getAllByPlatform(String platform){
+        return repository.findByPlatform(platform).stream().map(TriggerTypeMapper.INSTANCE::fromEntity).toList();
+    }
+
 
 }
 

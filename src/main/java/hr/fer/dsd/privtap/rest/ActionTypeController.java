@@ -2,6 +2,7 @@ package hr.fer.dsd.privtap.rest;
 
 
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.service.ActionTypeService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -35,4 +36,6 @@ public class ActionTypeController {
     public List<ActionType> getAllActionTypes() {
         return service.getAll();
     }
+    @GetMapping("/{platform}")
+    public List<ActionType> getAllByPlatform(@PathVariable @NotNull String platform){return service.getAllByPlatform(platform);}
 }

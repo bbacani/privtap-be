@@ -1,8 +1,10 @@
 package hr.fer.dsd.privtap.rest;
 
+import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.trigger.Trigger;
 import hr.fer.dsd.privtap.service.TriggerPublisher;
 import hr.fer.dsd.privtap.service.TriggerService;
+import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +36,7 @@ public class TriggerController {
 
     @GetMapping
     public List<Trigger> getAllTriggers() {
-        return service.getAll();
+         return service.getAll();
     }
 
     @PostMapping("/occurance")

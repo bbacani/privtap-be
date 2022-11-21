@@ -15,6 +15,7 @@ import java.util.List;
 public class ActionTypeEntity {
     @Id
     private String id;
+    private String platform;
     private String name;
     private String description;
     private List<String> requestFieldsNames;
