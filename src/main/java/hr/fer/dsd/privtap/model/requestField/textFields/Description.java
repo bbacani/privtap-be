@@ -13,9 +13,8 @@ public class Description extends RequestField {
     }
 
     public Description buildDefault(RequestFieldName name){
-        var description=new Description();
-        description.setName(name);
-        description.setValue(null);
-        return description;
+        this.setName(name);
+        this.setValue(null);
+        return this;
     }
 }

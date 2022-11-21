@@ -21,9 +21,8 @@ public class Location extends RequestField {
     }
 
     public Location buildDefault(RequestFieldName name){
-        var location=new Location();
-        location.setName(name);
-        location.setValue(null);
-        return location;
+        this.setName(name);
+        this.setValue(null);
+        return this;
     }
 }

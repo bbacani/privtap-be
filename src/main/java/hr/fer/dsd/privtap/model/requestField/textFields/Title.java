@@ -12,9 +12,8 @@ public class Title extends RequestField {
         this.setValue(content);
     }
     public Title buildDefault(RequestFieldName name){
-        var title=new Title();
-        title.setName(name);
-        title.setValue(null);
-        return title;
+        this.setName(name);
+        this.setValue(null);
+        return this;
     }
 }

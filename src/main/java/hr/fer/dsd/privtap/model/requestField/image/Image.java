@@ -13,9 +13,8 @@ public class Image extends RequestField {
         this.setValue(url);
     }
     public Image buildDefault(RequestFieldName name){
-        var image=new Image();
-        image.setName(name);
-        image.setValue(null);
-        return image;
+        this.setName(name);
+        this.setValue(null);
+        return this;
     }
 }
