@@ -22,11 +22,6 @@ public class UserService {
     private final ActionService actionService;
     private final TriggerService triggerService;
 
-    public void registerUser(User user) {
-        if (!userRepository.existsByEmail(user.getEmail()))
-            create(user);
-    }
-
     public User update(User user) {
         var entity = userRepository.findById(user.getId()).orElseThrow(NoSuchElementException::new);
         var updatedEntity = UserMapper.INSTANCE.updateEntity(entity, user);
@@ -35,18 +30,18 @@ public class UserService {
         return UserMapper.INSTANCE.fromEntity(updatedEntity);
     }
 
+    public void create(User user) {
+        var entity = UserMapper.INSTANCE.toEntity(user);
+        entity.setAutomations(new HashSet<>());
+        userRepository.save(entity);
+    }
+
     public User getById(String id) {
         return UserMapper.INSTANCE.fromEntity(userRepository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll().stream().map(UserMapper.INSTANCE::fromEntity).toList();
-    }
-
-    private void create(User user) {
-        var entity = UserMapper.INSTANCE.toEntity(user);
-        entity.setAutomations(new HashSet<>());
-        userRepository.save(entity);
     }
 
     public User registerAutomation(String userId, AutomationRequest request) {
