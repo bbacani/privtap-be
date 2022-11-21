@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +19,9 @@ public class TriggerEntity {
 
     @Id
     private String id;
+    private String userId;
     private String name;
+    private String typeId;
     private String description;
     private List<RequestField> fields;
     private Instant createdAt;

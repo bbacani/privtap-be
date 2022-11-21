@@ -2,11 +2,15 @@ package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.repositories.ActionRepository;
 import hr.fer.dsd.privtap.model.action.Action;
+import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import hr.fer.dsd.privtap.utils.mappers.ActionMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -14,32 +18,56 @@ import java.util.NoSuchElementException;
 @AllArgsConstructor
 public class ActionService {
 
-    private final ActionRepository repository;
+    private final ActionRepository actionRepository;
 
     public Action create(Action action) {
         var entity = ActionMapper.INSTANCE.toEntity(action);
         entity.setCreatedAt(Instant.now());
         entity.setUpdatedAt(Instant.now());
 
-        var savedEntity = repository.save(entity);
+        var savedEntity = actionRepository.save(entity);
         return ActionMapper.INSTANCE.fromEntity(savedEntity);
     }
 
     public Action update(Action action) {
-        var entity = repository.findById(action.getId()).orElseThrow(NoSuchElementException::new);
+        var entity = actionRepository.findById(action.getId()).orElseThrow(NoSuchElementException::new);
         var updatedEntity = ActionMapper.INSTANCE.updateEntity(entity, action);
         updatedEntity.setUpdatedAt(Instant.now());
 
-        repository.save(updatedEntity);
+        actionRepository.save(updatedEntity);
         return ActionMapper.INSTANCE.fromEntity(updatedEntity);
     }
 
     public Action get(String id) {
-        return ActionMapper.INSTANCE.fromEntity(repository.findById(id).orElseThrow(NoSuchElementException::new));
+        return ActionMapper.INSTANCE.fromEntity(actionRepository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 
     public List<Action> getAll() {
-        return repository.findAll().stream().map(ActionMapper.INSTANCE::fromEntity).toList();
+        return actionRepository.findAll().stream().map(ActionMapper.INSTANCE::fromEntity).toList();
     }
+
+    public Action getByTypeAndUser(String actionType, String userId){
+        return ActionMapper.INSTANCE.fromEntity(actionRepository.findByTypeIdAndUserId(actionType,userId).orElseThrow(NoSuchElementException::new));
+    }
+
+    public Action createFromType(ActionType actionType,String userId){
+        var fieldsList = new ArrayList<RequestField>();
+        for(var fieldName : actionType.getRequestFieldsNames()){
+            var field = ((RequestField)fieldName.getRelatedClass()).buildDefault(fieldName);
+            fieldsList.add( field);
+        }
+        Action action = Action.builder()
+                .userId(userId)
+                .name(actionType.getName())
+                .typeId(actionType.getId())
+                .description(actionType.getDescription())
+                .fields(fieldsList).build();
+
+        return create(action);
+    }
+
+
+    public boolean existsByTypeIdAndUserId(String typeId, String userId){return actionRepository.existsByTypeIdAndUserId(typeId,userId);  }
+
 
 }
