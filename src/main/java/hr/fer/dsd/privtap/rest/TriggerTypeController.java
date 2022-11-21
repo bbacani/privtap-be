@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -37,4 +38,8 @@ public class TriggerTypeController {
 
     @GetMapping("/{platform}")
     public List<TriggerType> getAllByPlatform(@PathVariable @NotNull String platform){return service.getAllByPlatform(platform);}
+    @GetMapping("/platforms")
+    public List<String> getAllPlatforms(){
+        return getAllTriggerTypes().stream().map(t->t.getPlatform()).distinct().collect(Collectors.toList());
+    }
 }
