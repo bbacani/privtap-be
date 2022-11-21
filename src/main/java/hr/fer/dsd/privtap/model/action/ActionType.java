@@ -17,6 +17,7 @@ public class ActionType {
     private String name;
     private String description;
     private List<RequestFieldName> requestFieldsNames;
+    private String url;
     private Instant createdAt;
     private Instant updatedAt;
 }

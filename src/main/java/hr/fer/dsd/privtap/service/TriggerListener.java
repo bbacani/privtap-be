@@ -29,7 +29,10 @@ public class TriggerListener {
                 .collect(Collectors.toSet());
         for(var a : automations){
             var action = actionService.getByTypeAndUser(a.getActionType().getId(),userId);
-            //action.setFields();
+            var sentFields = event.getTrigger().getFields();
+            action.setFields(sentFields);
+            actionService.handler(action);
+
             //set actionFields and call a method to send the action
         }
     }
