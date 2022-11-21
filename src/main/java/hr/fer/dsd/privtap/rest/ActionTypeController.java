@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -38,4 +39,9 @@ public class ActionTypeController {
     }
     @GetMapping("/{platform}")
     public List<ActionType> getAllByPlatform(@PathVariable @NotNull String platform){return service.getAllByPlatform(platform);}
+
+    @GetMapping("/platforms")
+    public List<String> getAllPlatforms(){
+        return getAllActionTypes().stream().map(a->a.getPlatform()).distinct().collect(Collectors.toList());
+    }
 }
