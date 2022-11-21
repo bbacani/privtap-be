@@ -4,7 +4,6 @@ import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -20,18 +19,6 @@ public class UserController {
     @GetMapping("/")
     public String home() {
         return "Home page!";
-    }
-
-    @GetMapping("/loginSuccess")
-    public String loginSuccess(OAuth2AuthenticationToken authentication) {
-      //  var response = authentication.getPrincipal().getAttributes();
-      //  service.registerUser(new User(null, response.get("name").toString(), response.get("email").toString(), null));
-        return "loginSuccess jeeeej";
-    }
-
-    @GetMapping("/loginFailure")
-    public String loginFailure() {
-        return "loginFailure";
     }
 
     @GetMapping("/user/{userId}")

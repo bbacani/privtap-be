@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.config;
 
+import hr.fer.dsd.privtap.security.oauth2.CustomOAuth2UserService;
 import hr.fer.dsd.privtap.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import hr.fer.dsd.privtap.security.oauth2.OAuth2AuthenticationFailureHandler;
 import hr.fer.dsd.privtap.security.oauth2.OAuth2AuthenticationSuccessHandler;
@@ -26,6 +27,8 @@ import java.io.IOException;
 @Configuration
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
@@ -57,6 +60,9 @@ public class WebSecurityConfig {
                         .and()
                     .redirectionEndpoint()
                         .baseUri("/oauth2/callback/*")
+                        .and()
+                    .userInfoEndpoint()
+                        .userService(customOAuth2UserService)
                         .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler);
