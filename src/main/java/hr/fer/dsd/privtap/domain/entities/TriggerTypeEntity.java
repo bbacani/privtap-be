@@ -1,6 +1,6 @@
 package hr.fer.dsd.privtap.domain.entities;
 
-import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,20 +9,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "actions")
-public class ActionEntity {
-
+@Document(collection = "triggerTypes")
+public class TriggerTypeEntity {
     @Id
     private String id;
-    private String userId;
+    private String platform;
     private String name;
-    private String typeId;
     private String description;
-    private List<RequestField> fields;
+    private List<RequestFieldName> requestFieldsNames;
     private Instant createdAt;
     private Instant updatedAt;
 }

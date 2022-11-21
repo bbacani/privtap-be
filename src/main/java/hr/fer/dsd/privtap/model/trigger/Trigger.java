@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -15,7 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 public class Trigger {
     private String id;
+    private String userId;
     private String name;
+    private String typeId;
     private String description;
     private List<RequestField> fields;
     private Instant createdAt;

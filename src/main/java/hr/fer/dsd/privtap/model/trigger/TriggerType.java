@@ -1,6 +1,6 @@
-package hr.fer.dsd.privtap.model.action;
+package hr.fer.dsd.privtap.model.trigger;
 
-import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +13,12 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Action {
+public class TriggerType {
     private String id;
-    private String userId;
+    private String platform;
     private String name;
-    private String typeId;
     private String description;
-    private List<RequestField> fields;
+    private List<RequestFieldName> requestFieldsNames;
     private Instant createdAt;
     private Instant updatedAt;
 }
