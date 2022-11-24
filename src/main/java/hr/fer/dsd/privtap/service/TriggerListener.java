@@ -19,7 +19,7 @@ public class TriggerListener {
     public void onApplicationEvent(TriggerEvent event){
         var userId = event.getTrigger().getUserId();
         System.out.println("trigger occured");
-        var automations = userService.getAutomationByUser(userId);
+        var automations = userService.getAllAutomations(userId);
         automations = automations
                 .stream()
                 .filter(a -> a
