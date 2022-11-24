@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -18,8 +17,11 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final ActionTypeService actionTypeService;
+
     private final TriggerTypeService triggerTypeService;
+
     private final ActionService actionService;
+
     private final TriggerService triggerService;
 
     public User update(User user) {
@@ -48,7 +50,7 @@ public class UserService {
         var action = actionTypeService.get(request.getActionTypeId());
         var trigger = triggerTypeService.get(request.getTriggerTypeId());
         var user = getById(userId);
-       if(!actionService.existsByTypeIdAndUserId(action.getId(),userId))
+        if(!actionService.existsByTypeIdAndUserId(action.getId(),userId))
             actionService.createFromType(action,userId);
         if(!triggerService.existsByTypeIdAndUserId(trigger.getId(),userId))
             triggerService.createFromType(trigger,userId);
@@ -69,8 +71,16 @@ public class UserService {
         return user;
     }
 
-    public Set<Automation> getAutomationByUser(String userId){
+    public void deleteAutomation(String userId, Automation automation) {
+        var user = getById(userId);
+        user.getAutomations().remove(automation);
+        var entity = UserMapper.INSTANCE.toEntity(user);
+        userRepository.save(entity);
+    }
+
+    public Set<Automation> getAllAutomations(String userId) {
         var user = getById(userId);
         return user.getAutomations();
     }
+
 }
