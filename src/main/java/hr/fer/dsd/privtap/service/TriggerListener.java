@@ -23,12 +23,12 @@ public class TriggerListener {
         automations = automations
                 .stream()
                 .filter(a -> a
-                        .getTriggerType()
+                        .getTrigger()
                         .getId()
                         .equals(event.getTrigger().getTypeId()))
                 .collect(Collectors.toSet());
         for(var a : automations){
-            var action = actionService.getByTypeAndUser(a.getActionType().getId(),userId);
+            var action = actionService.getByTypeAndUser(a.getAction().getId(),userId);
             //action.setFields();
             //set actionFields and call a method to send the action
         }

@@ -1,8 +1,10 @@
 package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.repositories.UserRepository;
+import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
+import hr.fer.dsd.privtap.model.trigger.Trigger;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.utils.mappers.UserMapper;
 import lombok.AllArgsConstructor;
@@ -47,19 +49,21 @@ public class UserService {
     }
 
     public User registerAutomation(String userId, AutomationRequest request) {
-        var action = actionTypeService.get(request.getActionTypeId());
-        var trigger = triggerTypeService.get(request.getTriggerTypeId());
+        var action = new Action();
+        var trigger = new Trigger();
+        var actionType = actionTypeService.get(request.getActionTypeId());
+        var triggerType = triggerTypeService.get(request.getTriggerTypeId());
         var user = getById(userId);
-        if(!actionService.existsByTypeIdAndUserId(action.getId(),userId))
-            actionService.createFromType(action,userId);
-        if(!triggerService.existsByTypeIdAndUserId(trigger.getId(),userId))
-            triggerService.createFromType(trigger,userId);
+        if(!actionService.existsByTypeIdAndUserId(actionType.getId(),userId))
+            action = actionService.createFromType(actionType,userId);
+        if(!triggerService.existsByTypeIdAndUserId(triggerType.getId(),userId))
+            trigger = triggerService.createFromType(triggerType,userId);
         var automation = Automation.builder()
                 .id(UUID.randomUUID().toString())
                 .name(request.getName())
                 .description(request.getDescription())
-                .actionType(action)
-                .triggerType(trigger)
+                .action(action)
+                .trigger(trigger)
                 .build();
         if(null!=user.getAutomations()) user.getAutomations().add(automation);
         else { var set= new HashSet<Automation>();
@@ -76,6 +80,8 @@ public class UserService {
         user.getAutomations().remove(automation);
         var entity = UserMapper.INSTANCE.toEntity(user);
         userRepository.save(entity);
+        actionService.delete(automation.getAction().getId());
+        triggerService.delete(automation.getTrigger().getId());
     }
 
     public Set<Automation> getAllAutomations(String userId) {
