@@ -37,7 +37,7 @@ public class ActionTypeController {
     public List<ActionType> getAllActionTypes() {
         return service.getAll();
     }
-    @GetMapping("/{platform}")
+    @GetMapping("/platform/{platform}")
     public List<ActionType> getAllByPlatform(@PathVariable @NotNull String platform){return service.getAllByPlatform(platform);}
 
     @GetMapping("/platforms")

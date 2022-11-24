@@ -39,7 +39,7 @@ public class TriggerController {
          return service.getAll();
     }
 
-    @PostMapping("/occurance")
+    @PostMapping("/occurrence")
     public void triggerOccurance(@RequestBody Trigger trigger){
         if(null==trigger.getUserId())
             for( var user : service.findUserIds(trigger.getTypeId())){
