@@ -5,10 +5,14 @@ import hr.fer.dsd.privtap.domain.repositories.ActionTypeRepository;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.action.ActionType;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.rest.ActionCaller;
 import hr.fer.dsd.privtap.utils.mappers.ActionMapper;
+import hr.fer.dsd.privtap.utils.mappers.ActionTypeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +75,7 @@ public class ActionService {
     public boolean existsByTypeIdAndUserId(String typeId, String userId){return actionRepository.existsByTypeIdAndUserId(typeId,userId);  }
 
 
-    public void handler(Action action) {
+    public void handler(Action action) throws URISyntaxException, IOException, InterruptedException {
         //temporary
         System.out.println(action.getName().toString());
         for(int i = 0; i < action.getFields().size(); i++){
@@ -80,10 +84,15 @@ public class ActionService {
         }
         /*
         //i need to redirect the action to the right endpoint
-        //l'endpoint depends on the type of the action
+        //l'endpoint depends on the type of the action*/
         var actionType= ActionTypeMapper.INSTANCE.fromEntity(
                 actionTypeRepository.findById(action.getTypeId()).orElseThrow(NoSuchElementException::new));
-        String endpoint = actionType.getUrl();
+        //String endpoint = actionType.getUrl();
+        String endpoint = "http://localhost:8080/seeAction";
+        ActionCaller actionCaller = new ActionCaller();
+        actionCaller.setUrl(endpoint);
+        actionCaller.dostuff();
+        //actionCaller.otherTrial(endpoint);
         //devo fare una post all'endpoint*/
 
 
