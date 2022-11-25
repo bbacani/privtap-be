@@ -35,10 +35,11 @@ public class TriggerTypeController {
         return service.getAll();
     }
 
-    @GetMapping("/{platform}")
+    @GetMapping("/platform/{platform}")
     public List<TriggerType> getAllByPlatform(@PathVariable @NotNull String platform) {
         return service.getAllByPlatform(platform);
     }
+
     @GetMapping("/platforms")
     public List<String> getAllPlatforms(){
         return getAllTriggerTypes().stream().map(TriggerType::getPlatform).distinct().collect(Collectors.toList());
