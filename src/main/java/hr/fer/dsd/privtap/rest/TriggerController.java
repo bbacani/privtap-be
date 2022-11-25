@@ -36,8 +36,8 @@ public class TriggerController {
          return service.getAll();
     }
 
-    @PostMapping("/occurance")
-    public void triggerOccurance(@RequestBody Trigger trigger) {
+    @PostMapping("/occurrence")
+    public void triggerOccurrence(@RequestBody Trigger trigger) {
         if(null==trigger.getUserId())
             for( var user : service.findUserIds(trigger.getTypeId())){
                 trigger.setUserId(user);
