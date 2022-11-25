@@ -21,14 +21,13 @@ public class TriggerTypeController {
     }
 
     @PatchMapping("/{triggerTypeId}")
-    public TriggerType updateTriggerType(@PathVariable @NotNull String triggerId, @RequestBody TriggerType triggerType) {
-        triggerType.setId(triggerId);
-        return service.update(triggerType);
+    public TriggerType updateTriggerType(@PathVariable @NotNull String triggerTypeId, @RequestBody TriggerType triggerType) {
+        return service.update(triggerTypeId, triggerType);
     }
 
     @GetMapping("/{triggerTypeId}")
-    public TriggerType getTriggerType(@PathVariable @NotNull String triggerId) {
-        return service.get(triggerId);
+    public TriggerType getTriggerType(@PathVariable @NotNull String triggerTypeId) {
+        return service.get(triggerTypeId);
     }
 
     @GetMapping
@@ -37,9 +36,12 @@ public class TriggerTypeController {
     }
 
     @GetMapping("/platform/{platform}")
-    public List<TriggerType> getAllByPlatform(@PathVariable @NotNull String platform){return service.getAllByPlatform(platform);}
+    public List<TriggerType> getAllByPlatform(@PathVariable @NotNull String platform) {
+        return service.getAllByPlatform(platform);
+    }
+
     @GetMapping("/platforms")
     public List<String> getAllPlatforms(){
-        return getAllTriggerTypes().stream().map(t->t.getPlatform()).distinct().collect(Collectors.toList());
+        return getAllTriggerTypes().stream().map(TriggerType::getPlatform).distinct().collect(Collectors.toList());
     }
 }
