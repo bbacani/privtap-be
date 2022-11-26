@@ -14,9 +14,8 @@ public class Content extends RequestField {
         this.setValue(content);
     }
     public Content buildDefault(RequestFieldName name){
-        var content=new Content();
-        content.setName(name);
-        content.setValue(null);
-        return content;
+        this.setName(name);
+        this.setValue(null);
+        return this;
     }
 }

@@ -2,7 +2,6 @@ package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.repositories.TriggerRepository;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
-import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import hr.fer.dsd.privtap.model.trigger.Trigger;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.utils.mappers.TriggerMapper;
@@ -28,10 +27,10 @@ public class TriggerService {
 
         var savedEntity = triggerRepository.save(entity);
         return TriggerMapper.INSTANCE.fromEntity(savedEntity);
-
     }
 
-    public Trigger update(Trigger trigger) {
+    public Trigger update(String triggerId, Trigger trigger) {
+        trigger.setId(triggerId);
         var entity = triggerRepository.findById(trigger.getId()).orElseThrow(NoSuchElementException::new);
         var updatedEntity = TriggerMapper.INSTANCE.updateEntity(entity, trigger);
         updatedEntity.setUpdatedAt(Instant.now());
@@ -40,23 +39,32 @@ public class TriggerService {
         return TriggerMapper.INSTANCE.fromEntity(updatedEntity);
     }
 
+    public void delete(String triggerId) {
+        var entity = triggerRepository.findById(triggerId).orElseThrow(NoSuchElementException::new);
+        triggerRepository.delete(entity);
+    }
+
     public Trigger get(String id) {
         return TriggerMapper.INSTANCE.fromEntity(triggerRepository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 
     public List<Trigger> getAll() {
         return triggerRepository.findAll().stream().map(TriggerMapper.INSTANCE::fromEntity).toList();
-
     }
+
     public List<Trigger> filterByType(String typeId) {
         return triggerRepository.findByTypeId(typeId).stream().map(TriggerMapper.INSTANCE::fromEntity).toList();
     }
-    public List<String> findUserIds(String typeId){
-        return filterByType(typeId).stream().map(t -> t.getUserId()).collect(Collectors.toList());
-    }
-    public boolean existsByTypeIdAndUserId(String typeId, String userId){return triggerRepository.existsByTypeIdAndUserId(typeId,userId);}
 
-    public Trigger createFromType(TriggerType triggerType, String userId){
+    public List<String> findUserIds(String typeId) {
+        return filterByType(typeId).stream().map(Trigger::getUserId).collect(Collectors.toList());
+    }
+
+    public boolean existsByTypeIdAndUserId(String typeId, String userId) {
+        return triggerRepository.existsByTypeIdAndUserId(typeId,userId);
+    }
+
+    public Trigger createFromType(TriggerType triggerType, String userId) {
         var fieldsList = new ArrayList<RequestField>();
         for(var fieldName : triggerType.getRequestFieldsNames()){
             var field = ((RequestField)fieldName.getRelatedClass()).buildDefault(fieldName);
@@ -72,7 +80,3 @@ public class TriggerService {
         return activateTrigger(trigger);
     }
 }
-
-
-
-

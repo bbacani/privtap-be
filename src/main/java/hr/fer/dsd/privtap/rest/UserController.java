@@ -1,14 +1,15 @@
 package hr.fer.dsd.privtap.rest;
 
+import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @RestController
@@ -22,19 +23,7 @@ public class UserController {
         return "Home page!";
     }
 
-    @GetMapping("/loginSuccess")
-    public String loginSuccess(OAuth2AuthenticationToken authentication) {
-        var response = authentication.getPrincipal().getAttributes();
-        service.registerUser(new User(null, response.get("name").toString(), response.get("email").toString(), null));
-        return "loginSuccess";
-    }
-
-    @GetMapping("/loginFailure")
-    public String loginFailure() {
-        return "loginFailure";
-    }
-
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public User getById(@PathVariable @NotNull String userId) {
         return service.getById(userId);
     }
@@ -54,4 +43,13 @@ public class UserController {
         return service.registerAutomation(userId, request);
     }
 
+    @DeleteMapping("/automation/{userId}")
+    public void deleteAutomation(@PathVariable @NotNull String userId, @RequestBody Automation automation) {
+        service.deleteAutomation(userId, automation);
+    }
+
+    @GetMapping("/automation/{userId}")
+    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
+        return service.getAllAutomations(userId);
+    }
 }

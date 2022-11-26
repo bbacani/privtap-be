@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -20,18 +21,27 @@ public class TriggerTypeController {
     }
 
     @PatchMapping("/{triggerTypeId}")
-    public TriggerType updateTriggerType(@PathVariable @NotNull String triggerId, @RequestBody TriggerType triggerType) {
-        triggerType.setId(triggerId);
-        return service.update(triggerType);
+    public TriggerType updateTriggerType(@PathVariable @NotNull String triggerTypeId, @RequestBody TriggerType triggerType) {
+        return service.update(triggerTypeId, triggerType);
     }
 
     @GetMapping("/{triggerTypeId}")
-    public TriggerType getTriggerType(@PathVariable @NotNull String triggerId) {
-        return service.get(triggerId);
+    public TriggerType getTriggerType(@PathVariable @NotNull String triggerTypeId) {
+        return service.get(triggerTypeId);
     }
 
     @GetMapping
     public List<TriggerType> getAllTriggerTypes() {
         return service.getAll();
+    }
+
+    @GetMapping("/platform/{platform}")
+    public List<TriggerType> getAllByPlatform(@PathVariable @NotNull String platform) {
+        return service.getAllByPlatform(platform);
+    }
+
+    @GetMapping("/platforms")
+    public List<String> getAllPlatforms(){
+        return getAllTriggerTypes().stream().map(TriggerType::getPlatform).distinct().collect(Collectors.toList());
     }
 }

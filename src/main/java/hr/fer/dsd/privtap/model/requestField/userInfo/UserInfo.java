@@ -25,9 +25,8 @@ public class UserInfo extends RequestField implements Serializable {
         }
     }
     public UserInfo buildDefault(RequestFieldName name){
-        var userinfo=new UserInfo();
-        userinfo.setName(name);
-        userinfo.setValue(null);
-        return userinfo;
+        this.setName(name);
+        this.setValue(null);
+        return this;
     }
 }

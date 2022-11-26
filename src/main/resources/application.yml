@@ -1,0 +1,16 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://user:dsdPassword@cluster0.e1yles2.mongodb.net/?retryWrites=true&w=majority
+      database: dsd
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 743122843221-tf2rbepbvd26u109u9s9nn9a35bclsdl.apps.googleusercontent.com
+            client-secret: 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
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile

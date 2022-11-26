@@ -15,9 +15,8 @@ public class Date extends RequestField implements Serializable {
         this.setValue(value);
     }
     public Date buildDefault(RequestFieldName name){
-        var date=new Date();
-        date.setName(name);
-        date.setValue(null);
-        return date;
+        this.setName(name);
+        this.setValue(null);
+        return this;
     }
 }

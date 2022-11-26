@@ -23,8 +23,7 @@ public class TriggerController {
 
     @PatchMapping("/{triggerId}")
     public Trigger updateTrigger(@PathVariable @NotNull String triggerId, @RequestBody Trigger trigger) {
-        trigger.setId(triggerId);
-        return service.update(trigger);
+        return service.update(triggerId, trigger);
     }
 
     @GetMapping("/{triggerId}")
@@ -34,11 +33,11 @@ public class TriggerController {
 
     @GetMapping
     public List<Trigger> getAllTriggers() {
-        return service.getAll();
+         return service.getAll();
     }
 
-    @PostMapping("/occurance")
-    public void triggerOccurance(@RequestBody Trigger trigger){
+    @PostMapping("/occurrence")
+    public void triggerOccurrence(@RequestBody Trigger trigger) {
         if(null==trigger.getUserId())
             for( var user : service.findUserIds(trigger.getTypeId())){
                 trigger.setUserId(user);

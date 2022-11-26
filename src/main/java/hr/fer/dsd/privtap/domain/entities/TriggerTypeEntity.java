@@ -18,6 +18,7 @@ import java.util.Set;
 public class TriggerTypeEntity {
     @Id
     private String id;
+    private String platform;
     private String name;
     private String description;
     private List<RequestFieldName> requestFieldsNames;

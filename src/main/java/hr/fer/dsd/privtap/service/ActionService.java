@@ -32,13 +32,19 @@ public class ActionService {
         return ActionMapper.INSTANCE.fromEntity(savedEntity);
     }
 
-    public Action update(Action action) {
+    public Action update(String actionId, Action action) {
+        action.setId(actionId);
         var entity = actionRepository.findById(action.getId()).orElseThrow(NoSuchElementException::new);
         var updatedEntity = ActionMapper.INSTANCE.updateEntity(entity, action);
         updatedEntity.setUpdatedAt(Instant.now());
 
         actionRepository.save(updatedEntity);
         return ActionMapper.INSTANCE.fromEntity(updatedEntity);
+    }
+
+    public void delete(String actionId) {
+        var entity = actionRepository.findById(actionId).orElseThrow(NoSuchElementException::new);
+        actionRepository.delete(entity);
     }
 
     public Action get(String id) {
@@ -49,11 +55,12 @@ public class ActionService {
         return actionRepository.findAll().stream().map(ActionMapper.INSTANCE::fromEntity).toList();
     }
 
-    public Action getByTypeAndUser(String actionType, String userId){
-        return ActionMapper.INSTANCE.fromEntity(actionRepository.findByTypeIdAndUserId(actionType,userId).orElseThrow(NoSuchElementException::new));
+    public Action getByTypeAndUser(String actionType, String userId) {
+        return ActionMapper.INSTANCE.fromEntity(
+                actionRepository.findByTypeIdAndUserId(actionType,userId).orElseThrow(NoSuchElementException::new));
     }
 
-    public Action createFromType(ActionType actionType,String userId){
+    public Action createFromType(ActionType actionType,String userId) {
         var fieldsList = new ArrayList<RequestField>();
         for(var fieldName : actionType.getRequestFieldsNames()){
             var field = ((RequestField)fieldName.getRelatedClass()).buildDefault(fieldName);
@@ -69,9 +76,9 @@ public class ActionService {
         return create(action);
     }
 
-
-    public boolean existsByTypeIdAndUserId(String typeId, String userId){return actionRepository.existsByTypeIdAndUserId(typeId,userId);  }
-
+    public boolean existsByTypeIdAndUserId(String typeId, String userId) {
+        return actionRepository.existsByTypeIdAndUserId(typeId,userId);
+    }
 
     public void handler(Action action){
         //temporary

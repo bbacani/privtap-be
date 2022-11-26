@@ -24,7 +24,8 @@ public class ActionTypeService {
         return ActionTypeMapper.INSTANCE.fromEntity(savedEntity);
     }
 
-    public ActionType update(ActionType actionType) {
+    public ActionType update(String actionTypeId, ActionType actionType) {
+        actionType.setId(actionTypeId);
         var entity = actionTypeRepository.findById(actionType.getId()).orElseThrow(NoSuchElementException::new);
         var updatedEntity = ActionTypeMapper.INSTANCE.updateEntity(entity, actionType);
         actionTypeRepository.save(updatedEntity);
@@ -39,5 +40,8 @@ public class ActionTypeService {
         return actionTypeRepository.findAll().stream().map(ActionTypeMapper.INSTANCE::fromEntity).toList();
     }
 
+    public List<ActionType> getAllByPlatform(String platform){
+        return actionTypeRepository.findByPlatform(platform).stream().map(ActionTypeMapper.INSTANCE::fromEntity).toList();
+    }
 
 }
