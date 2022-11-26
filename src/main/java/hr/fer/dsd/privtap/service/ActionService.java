@@ -82,8 +82,7 @@ public class ActionService {
         }
         var actionType= ActionTypeMapper.INSTANCE.fromEntity(
                 actionTypeRepository.findById(action.getTypeId()).orElseThrow(NoSuchElementException::new));
-        //String endpoint = actionType.getUrl();
-        String endpoint = "http://localhost:8080/seeAction";
+        String endpoint = actionType.getUrl();
         ActionCaller actionCaller = new ActionCaller();
         actionCaller.templateAttempt(endpoint, action);
 
