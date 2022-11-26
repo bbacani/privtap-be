@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -20,7 +18,7 @@ public class TriggerListener {
 
 
     @EventListener
-    public void onApplicationEvent(TriggerEvent event) throws URISyntaxException, IOException, InterruptedException {
+    public void onApplicationEvent(TriggerEvent event){
         var userId = event.getTrigger().getUserId();
         System.out.println("trigger occured");
         var automations = userService.getAutomationByUser(userId);
@@ -34,7 +32,6 @@ public class TriggerListener {
         for(var a : automations){
             var action = actionService.getByTypeAndUser(a.getActionType().getId(),userId);
             var fields = new ArrayList<RequestField>();
-
             for(RequestField f : action.getFields()){
                 var eachField = ((RequestField)f.getName().getRelatedClass()).buildDefault(f.getName());
                 for(RequestField triggerField : event.getTrigger().getFields()){
@@ -44,7 +41,6 @@ public class TriggerListener {
                 }
                 fields.add(eachField);
             }
-
             action.setFields(fields);
             actionService.handler(action);
         }

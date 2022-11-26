@@ -8,7 +8,9 @@ import hr.fer.dsd.privtap.model.requestField.textFields.Description;
 import hr.fer.dsd.privtap.model.requestField.textFields.Title;
 import hr.fer.dsd.privtap.model.requestField.userInfo.UserInfo;
 
-public enum RequestFieldName {
+import java.io.Serializable;
+
+public enum RequestFieldName implements Serializable {
 
     date, image, location, content, description, title, userinfo;
 

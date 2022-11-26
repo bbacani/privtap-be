@@ -11,8 +11,6 @@ import hr.fer.dsd.privtap.utils.mappers.ActionTypeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,25 +73,19 @@ public class ActionService {
     public boolean existsByTypeIdAndUserId(String typeId, String userId){return actionRepository.existsByTypeIdAndUserId(typeId,userId);  }
 
 
-    public void handler(Action action) throws URISyntaxException, IOException, InterruptedException {
+    public void handler(Action action){
         //temporary
-        System.out.println(action.getName().toString());
+        System.out.println(action.getName());
         for(int i = 0; i < action.getFields().size(); i++){
             System.out.println("field name: " + action.getFields().get(i).getName().toString() + " - value: "
                     + action.getFields().get(i).getValue().toString());
         }
-        /*
-        //i need to redirect the action to the right endpoint
-        //l'endpoint depends on the type of the action*/
         var actionType= ActionTypeMapper.INSTANCE.fromEntity(
                 actionTypeRepository.findById(action.getTypeId()).orElseThrow(NoSuchElementException::new));
         //String endpoint = actionType.getUrl();
         String endpoint = "http://localhost:8080/seeAction";
         ActionCaller actionCaller = new ActionCaller();
-        actionCaller.setUrl(endpoint);
-        actionCaller.dostuff();
-        //actionCaller.otherTrial(endpoint);
-        //devo fare una post all'endpoint*/
+        actionCaller.templateAttempt(endpoint, action);
 
 
     }

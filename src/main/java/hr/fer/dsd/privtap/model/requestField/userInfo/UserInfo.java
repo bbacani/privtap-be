@@ -5,9 +5,11 @@ import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
-public class UserInfo extends RequestField{
+public class UserInfo extends RequestField implements Serializable {
 
     private class Info {
         private String username;
