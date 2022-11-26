@@ -77,12 +77,11 @@ public class ActionService {
     }
 
     public boolean existsByTypeIdAndUserId(String typeId, String userId) {
-        return actionRepository.existsByTypeIdAndUserId(typeId,userId);
+        return actionRepository.findByTypeIdAndUserId(typeId,userId).isPresent();
     }
 
     public void handler(Action action){
         //temporary
-        System.out.println(action.getName());
         for(int i = 0; i < action.getFields().size(); i++){
             System.out.println("field name: " + action.getFields().get(i).getName().toString() + " - value: "
                     + action.getFields().get(i).getValue().toString());
@@ -91,7 +90,7 @@ public class ActionService {
                 actionTypeRepository.findById(action.getTypeId()).orElseThrow(NoSuchElementException::new));
         String endpoint = actionType.getUrl();
         ActionCaller actionCaller = new ActionCaller();
-        actionCaller.templateAttempt(endpoint, action);
+        actionCaller.callAction(endpoint, action);
 
 
     }

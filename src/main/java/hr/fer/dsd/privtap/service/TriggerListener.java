@@ -26,14 +26,12 @@ public class TriggerListener {
                 .stream()
                 .filter(a -> a
                         .getTrigger()
-                        .getId()
+                        .getTypeId()
                         .equals(event.getTrigger().getTypeId()))
                 .collect(Collectors.toSet());
         for(var a : automations){
-            var action = actionService.getByTypeAndUser(a.getAction().getId(),userId);
-            //action.setFields();
-            //set actionFields and call a method to send the action
-            var action = actionService.getByTypeAndUser(a.getActionType().getId(),userId);
+            var action = a.getAction();
+            System.out.println(action.getName());
             var fields = new ArrayList<RequestField>();
             for(RequestField f : action.getFields()){
                 var eachField = ((RequestField)f.getName().getRelatedClass()).buildDefault(f.getName());

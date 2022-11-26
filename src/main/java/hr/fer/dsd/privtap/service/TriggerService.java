@@ -60,8 +60,13 @@ public class TriggerService {
         return filterByType(typeId).stream().map(Trigger::getUserId).collect(Collectors.toList());
     }
 
+    public Trigger getByTypeAndUser(String triggerType, String userId) {
+        return TriggerMapper.INSTANCE.fromEntity(
+                triggerRepository.findByTypeIdAndUserId(triggerType,userId).orElseThrow(NoSuchElementException::new));
+    }
+
     public boolean existsByTypeIdAndUserId(String typeId, String userId) {
-        return triggerRepository.existsByTypeIdAndUserId(typeId,userId);
+        return triggerRepository.findByTypeIdAndUserId(typeId,userId).isPresent();
     }
 
     public Trigger createFromType(TriggerType triggerType, String userId) {

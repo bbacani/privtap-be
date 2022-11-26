@@ -11,7 +11,7 @@ import java.util.Collections;
 
 public class ActionCaller {
 
-    public void templateAttempt(String url, Action action){
+    public void callAction(String url, Action action){
         RestTemplate template = new RestTemplate();
         HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
