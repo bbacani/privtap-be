@@ -7,6 +7,7 @@ import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class UserController {
     }
 
     @PatchMapping("/")
-    public User update(@RequestBody @NotNull User user) {
+    public User update(@Valid @RequestBody @NotNull User user) {
         return service.update(user);
     }
 
@@ -39,12 +40,12 @@ public class UserController {
     }
 
     @PostMapping("/automation/{userId}")
-    public User registerAutomation(@PathVariable @NotNull String userId, @RequestBody AutomationRequest request) {
+    public User registerAutomation(@PathVariable @NotNull String userId, @Valid @RequestBody AutomationRequest request) {
         return service.registerAutomation(userId, request);
     }
 
     @DeleteMapping("/automation/{userId}")
-    public void deleteAutomation(@PathVariable @NotNull String userId, @RequestBody Automation automation) {
+    public void deleteAutomation(@PathVariable @NotNull String userId, @Valid @RequestBody Automation automation) {
         service.deleteAutomation(userId, automation);
     }
 

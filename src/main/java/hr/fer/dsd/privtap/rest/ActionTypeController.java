@@ -5,6 +5,7 @@ import hr.fer.dsd.privtap.service.ActionTypeService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,12 +17,12 @@ public class ActionTypeController {
     private final ActionTypeService service;
 
     @PostMapping
-    public ActionType registerActionType(@RequestBody ActionType actionType) {
+    public ActionType registerActionType(@Valid @RequestBody ActionType actionType) {
         return service.create(actionType);
     }
 
     @PatchMapping("/{actionTypeId}")
-    public ActionType updateActionType(@PathVariable @NotNull String actionTypeId, @RequestBody ActionType actionType) {
+    public ActionType updateActionType(@PathVariable @NotNull String actionTypeId, @Valid @RequestBody ActionType actionType) {
         return service.update(actionTypeId, actionType);
     }
 

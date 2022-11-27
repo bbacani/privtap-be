@@ -1,6 +1,7 @@
 package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.repositories.UserRepository;
+import hr.fer.dsd.privtap.exceptions.*;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
@@ -27,7 +28,9 @@ public class UserService {
     private final TriggerService triggerService;
 
     public User update(User user) {
-        var entity = userRepository.findById(user.getId()).orElseThrow(NoSuchElementException::new);
+        var entity = userRepository.findById(user.getId()).orElseThrow(
+                () -> new NoUserFoundException("User with id " + user.getId() + " does not exist")
+        );
         var updatedEntity = UserMapper.INSTANCE.updateEntity(entity, user);
 
         userRepository.save(updatedEntity);
@@ -41,7 +44,9 @@ public class UserService {
     }
 
     public User getById(String id) {
-        return UserMapper.INSTANCE.fromEntity(userRepository.findById(id).orElseThrow(NoSuchElementException::new));
+        return UserMapper.INSTANCE.fromEntity(userRepository.findById(id).orElseThrow(
+                () -> new NoUserFoundException("User with id " + id + " does not exist")
+        ));
     }
 
     public List<User> getAllUsers() {
@@ -53,11 +58,20 @@ public class UserService {
         var trigger = new Trigger();
         var actionType = actionTypeService.get(request.getActionTypeId());
         var triggerType = triggerTypeService.get(request.getTriggerTypeId());
+
+        if (actionService.existsByTypeIdAndUserId(actionType.getId(), userId)) {
+            throw new ActionAlreadyExistsException("Action with id " + actionType.getId() + " already exists");
+        } else {
+            action = actionService.createFromType(actionType, userId);
+        }
+
+        if (triggerService.existsByTypeIdAndUserId(triggerType.getId(), userId)) {
+            throw new TriggerAlreadyExistsException("Trigger with id " + triggerType.getId() + " already exists");
+        } else {
+            trigger = triggerService.createFromType(triggerType, userId);
+        }
+
         var user = getById(userId);
-        if(!actionService.existsByTypeIdAndUserId(actionType.getId(),userId))
-            action = actionService.createFromType(actionType,userId);
-        if(!triggerService.existsByTypeIdAndUserId(triggerType.getId(),userId))
-            trigger = triggerService.createFromType(triggerType,userId);
         var automation = Automation.builder()
                 .id(UUID.randomUUID().toString())
                 .name(request.getName())
@@ -65,22 +79,41 @@ public class UserService {
                 .action(action)
                 .trigger(trigger)
                 .build();
+
         if (user.getAutomations().contains(automation)) {
-            throw new RuntimeException();
+            throw new AutomationAlreadyExistsException("Automation with id " + automation.getId() + " already exists");
+        } else {
+            user.getAutomations().add(automation);
+            var entity = UserMapper.INSTANCE.toEntity(user);
+            userRepository.save(entity);
         }
-        user.getAutomations().add(automation);
-        var entity = UserMapper.INSTANCE.toEntity(user);
-        userRepository.save(entity);
+
         return user;
     }
 
     public void deleteAutomation(String userId, Automation automation) {
         var user = getById(userId);
-        user.getAutomations().remove(automation);
-        var entity = UserMapper.INSTANCE.toEntity(user);
-        userRepository.save(entity);
-        actionService.delete(automation.getAction().getId());
-        triggerService.delete(automation.getTrigger().getId());
+        if (!user.getAutomations().contains(automation)) {
+            throw new NoAutomationFoundException("Automation with id " + automation.getId() + " does not exist");
+        } else {
+            user.getAutomations().remove(automation);
+            var entity = UserMapper.INSTANCE.toEntity(user);
+            userRepository.save(entity);
+        }
+
+        Trigger trigger = automation.getTrigger();
+        if (!actionService.existsByTypeIdAndUserId(trigger.getTypeId(), trigger.getUserId())) {
+            throw new NoTriggerFoundException("Trigger with id " + trigger.getId() + " does not exist");
+        } else {
+            actionService.delete(trigger.getId());
+        }
+
+        Action action = automation.getAction();
+        if (!actionService.existsByTypeIdAndUserId(action.getTypeId(), action.getUserId())) {
+            throw new NoActionFoundException("Action with id " + action.getId() + " does not exist");
+        } else {
+            actionService.delete(action.getId());
+        }
     }
 
     public Set<Automation> getAllAutomations(String userId) {

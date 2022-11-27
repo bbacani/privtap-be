@@ -5,6 +5,7 @@ import hr.fer.dsd.privtap.service.TriggerTypeService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,12 +17,12 @@ public class TriggerTypeController {
     private final TriggerTypeService service;
 
     @PostMapping
-    public TriggerType registerTriggerType(@RequestBody TriggerType triggerType) {
+    public TriggerType registerTriggerType(@Valid @RequestBody TriggerType triggerType) {
         return service.create(triggerType);
     }
 
     @PatchMapping("/{triggerTypeId}")
-    public TriggerType updateTriggerType(@PathVariable @NotNull String triggerTypeId, @RequestBody TriggerType triggerType) {
+    public TriggerType updateTriggerType(@PathVariable @NotNull String triggerTypeId, @Valid @RequestBody TriggerType triggerType) {
         return service.update(triggerTypeId, triggerType);
     }
 
