@@ -28,7 +28,7 @@ public class ActionController {
 
     @GetMapping("/{actionId}")
     public Action getAction(@PathVariable @NotNull String actionId) {
-         return service.get(actionId);
+         return service.findById(actionId);
     }
 
     @GetMapping

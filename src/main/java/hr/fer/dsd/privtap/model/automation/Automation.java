@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Data
@@ -15,9 +16,12 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Automation {
     private String id;
+    @NotNull(message = "name can not be null")
     private String name;
     private String description;
+    @NotNull(message = "trigger can not be null")
     private Trigger trigger;
+    @NotNull(message = "action can not be null")
     private Action action;
 
     @Override

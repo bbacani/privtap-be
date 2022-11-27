@@ -3,10 +3,8 @@ package hr.fer.dsd.privtap.service;
 import hr.fer.dsd.privtap.domain.repositories.ActionRepository;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.action.ActionType;
-import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
 import hr.fer.dsd.privtap.utils.mappers.ActionMapper;
-import hr.fer.dsd.privtap.utils.mappers.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +43,7 @@ public class ActionService {
         actionRepository.delete(entity);
     }
 
-    public Action get(String id) {
+    public Action findById(String id) {
         return ActionMapper.INSTANCE.fromEntity(actionRepository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 

@@ -29,7 +29,7 @@ public class TriggerController {
 
     @GetMapping("/{triggerId}")
     public Trigger getTrigger(@PathVariable @NotNull String triggerId) {
-        return service.get(triggerId);
+        return service.findById(triggerId);
     }
 
     @GetMapping

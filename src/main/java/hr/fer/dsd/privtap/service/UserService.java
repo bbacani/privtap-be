@@ -43,13 +43,13 @@ public class UserService {
         userRepository.save(entity);
     }
 
-    public User getById(String id) {
+    public User findById(String id) {
         return UserMapper.INSTANCE.fromEntity(userRepository.findById(id).orElseThrow(
                 () -> new NoUserFoundException("User with id " + id + " does not exist")
         ));
     }
 
-    public List<User> getAllUsers() {
+    public List<User> findAll() {
         return userRepository.findAll().stream().map(UserMapper.INSTANCE::fromEntity).toList();
     }
 
@@ -71,7 +71,7 @@ public class UserService {
             trigger = triggerService.createFromType(triggerType, userId);
         }
 
-        var user = getById(userId);
+        var user = findById(userId);
         var automation = Automation.builder()
                 .id(UUID.randomUUID().toString())
                 .name(request.getName())
@@ -92,7 +92,7 @@ public class UserService {
     }
 
     public void deleteAutomation(String userId, Automation automation) {
-        var user = getById(userId);
+        var user = findById(userId);
         if (!user.getAutomations().contains(automation)) {
             throw new NoAutomationFoundException("Automation with id " + automation.getId() + " does not exist");
         } else {
@@ -117,7 +117,7 @@ public class UserService {
     }
 
     public Set<Automation> getAllAutomations(String userId) {
-        var user = getById(userId);
+        var user = findById(userId);
         return user.getAutomations();
     }
 
