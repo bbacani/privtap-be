@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-
-
 @Component
 public class TriggerPublisher {
     @Autowired
@@ -17,5 +15,3 @@ public class TriggerPublisher {
         applicationEventPublisher.publishEvent(new TriggerEvent(this,trigger));
     }
 }
-
-
