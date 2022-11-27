@@ -4,6 +4,7 @@ import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,11 @@ public class UserController {
     @GetMapping("/")
     public String home() {
         return "Home page!";
+    }
+
+    @GetMapping("me")
+    public String getCurrentUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
     @GetMapping("/user/{userId}")
