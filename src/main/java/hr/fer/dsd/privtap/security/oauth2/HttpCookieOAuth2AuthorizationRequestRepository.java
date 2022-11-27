@@ -2,10 +2,7 @@ package hr.fer.dsd.privtap.security.oauth2;
 
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import hr.fer.dsd.privtap.security.CookieUtils;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
 
