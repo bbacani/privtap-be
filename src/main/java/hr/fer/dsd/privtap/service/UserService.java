@@ -65,6 +65,9 @@ public class UserService {
                 .action(action)
                 .trigger(trigger)
                 .build();
+        if (user.getAutomations().contains(automation)) {
+            throw new RuntimeException();
+        }
         user.getAutomations().add(automation);
         var entity = UserMapper.INSTANCE.toEntity(user);
         userRepository.save(entity);
