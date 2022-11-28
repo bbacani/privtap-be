@@ -68,11 +68,10 @@ public class UserService {
                 .action(action)
                 .trigger(trigger)
                 .build();
-        if(null!=user.getAutomations()) user.getAutomations().add(automation);
-        else { var set= new HashSet<Automation>();
-            set.add(automation);
-            user.setAutomations(set);
+        if (user.getAutomations().contains(automation)) {
+            throw new RuntimeException();
         }
+        user.getAutomations().add(automation);
         var entity = UserMapper.INSTANCE.toEntity(user);
         userRepository.save(entity);
         return user;
