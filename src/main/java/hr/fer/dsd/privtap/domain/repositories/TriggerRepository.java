@@ -5,12 +5,13 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TriggerRepository extends MongoRepository<TriggerEntity, String> {
 
     List<TriggerEntity> findByTypeId(String typeId);
 
-    boolean existsByTypeIdAndUserId(String typeId, String userId);
+    Optional<TriggerEntity> findByTypeIdAndUserId(String typeId, String userId);
 }
 

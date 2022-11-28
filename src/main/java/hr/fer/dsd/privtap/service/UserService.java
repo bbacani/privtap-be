@@ -49,15 +49,18 @@ public class UserService {
     }
 
     public User registerAutomation(String userId, AutomationRequest request) {
-        var action = new Action();
-        var trigger = new Trigger();
         var actionType = actionTypeService.get(request.getActionTypeId());
         var triggerType = triggerTypeService.get(request.getTriggerTypeId());
+        var action = new Action();
+        var trigger = new Trigger();
         var user = getById(userId);
         if(!actionService.existsByTypeIdAndUserId(actionType.getId(),userId))
             action = actionService.createFromType(actionType,userId);
+        else action=actionService.getByTypeAndUser(actionType.getId(),userId);
         if(!triggerService.existsByTypeIdAndUserId(triggerType.getId(),userId))
             trigger = triggerService.createFromType(triggerType,userId);
+        else trigger=triggerService.getByTypeAndUser(triggerType.getId(),userId);
+
         var automation = Automation.builder()
                 .id(UUID.randomUUID().toString())
                 .name(request.getName())

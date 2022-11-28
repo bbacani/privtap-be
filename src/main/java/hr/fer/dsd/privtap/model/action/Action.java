@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Action {
+public class Action implements Serializable {
     private String id;
     private String userId;
     private String name;
@@ -23,3 +24,5 @@ public class Action {
     private Instant createdAt;
     private Instant updatedAt;
 }
+
+

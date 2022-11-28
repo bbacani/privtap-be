@@ -1,12 +1,13 @@
 package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.repositories.ActionRepository;
+import hr.fer.dsd.privtap.domain.repositories.ActionTypeRepository;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.action.ActionType;
-import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.rest.ActionCaller;
 import hr.fer.dsd.privtap.utils.mappers.ActionMapper;
-import hr.fer.dsd.privtap.utils.mappers.UserMapper;
+import hr.fer.dsd.privtap.utils.mappers.ActionTypeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.NoSuchElementException;
 public class ActionService {
 
     private final ActionRepository actionRepository;
+    private final ActionTypeRepository actionTypeRepository;
 
     public Action create(Action action) {
         var entity = ActionMapper.INSTANCE.toEntity(action);
@@ -62,7 +64,7 @@ public class ActionService {
         var fieldsList = new ArrayList<RequestField>();
         for(var fieldName : actionType.getRequestFieldsNames()){
             var field = ((RequestField)fieldName.getRelatedClass()).buildDefault(fieldName);
-            fieldsList.add( field);
+            fieldsList.add(field);
         }
         Action action = Action.builder()
                 .userId(userId)
@@ -75,7 +77,14 @@ public class ActionService {
     }
 
     public boolean existsByTypeIdAndUserId(String typeId, String userId) {
-        return actionRepository.existsByTypeIdAndUserId(typeId,userId);
+        return actionRepository.findByTypeIdAndUserId(typeId,userId).isPresent();
     }
 
+    public void handler(Action action){
+        var actionType= ActionTypeMapper.INSTANCE.fromEntity(
+                actionTypeRepository.findById(action.getTypeId()).orElseThrow(NoSuchElementException::new));
+        String endpoint = actionType.getUrl();
+        ActionCaller actionCaller = new ActionCaller();
+        actionCaller.callAction(endpoint, action);
+    }
 }
