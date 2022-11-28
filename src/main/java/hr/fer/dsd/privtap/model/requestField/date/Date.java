@@ -5,9 +5,11 @@ import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
-public class Date extends RequestField {
+public class Date extends RequestField implements Serializable {
 
     public Date(String value) {
         this.setValue(value);

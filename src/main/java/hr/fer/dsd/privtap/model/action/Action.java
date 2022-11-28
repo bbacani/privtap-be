@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Action {
+public class Action implements Serializable {
     private String id;
     @NotNull(message = "userId can not be null")
     private String userId;
@@ -29,3 +30,5 @@ public class Action {
 
 
 }
+
+

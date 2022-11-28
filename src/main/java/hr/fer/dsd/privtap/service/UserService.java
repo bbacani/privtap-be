@@ -54,8 +54,6 @@ public class UserService {
     }
 
     public User registerAutomation(String userId, AutomationRequest request) {
-        var action = new Action();
-        var trigger = new Trigger();
         var actionType = actionTypeService.get(request.getActionTypeId());
         var triggerType = triggerTypeService.get(request.getTriggerTypeId());
 
