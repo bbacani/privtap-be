@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -18,9 +19,9 @@ public class TriggerListener {
 
 
     @EventListener
-    public void onApplicationEvent(TriggerEvent event){
+    public void onApplicationEvent(TriggerEvent event) throws URISyntaxException {
         var userId = event.getTrigger().getUserId();
-        System.out.println("trigger occured");
+        System.out.println("trigger occurred");
         var automations = userService.getAllAutomations(userId);
         automations = automations
                 .stream()

@@ -1,13 +1,11 @@
 package hr.fer.dsd.privtap.rest;
 
 import hr.fer.dsd.privtap.model.action.Action;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
@@ -25,10 +23,37 @@ public class ActionCaller {
         System.out.println("status code" + response.getStatusCode());
     }
 
-    public void secondAttempt(String url, Action action){
-        WebClient client = WebClient.create();
-        WebClient.UriSpec<WebClient.RequestBodySpec> uriSpec = client.post();
-        WebClient.RequestBodySpec bodySpec = uriSpec.uri(url);
+    public void blockingCall(String url, Action action){
+        WebClient client = WebClient.builder()
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+
+        ResponseEntity responseEntity = client.post()
+                .uri(url)
+                .body(Mono.just(action), Action.class)
+                .retrieve()
+                .toEntity(String.class)
+                .block();
+
+        System.out.println("status :" + responseEntity.getStatusCode());
+
+
     }
+
+    public void blockingCall2(String url, Action action){
+        WebClient client = WebClient.builder()
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+
+        Disposable responseEntity = client.post()
+                .uri(url)
+                .body(Mono.just(action), Action.class)
+                .retrieve()
+                .toEntity(String.class)
+                .subscribe(stringResponseEntity -> {
+                    System.out.println(stringResponseEntity);
+                });
+    }
+
 
 }

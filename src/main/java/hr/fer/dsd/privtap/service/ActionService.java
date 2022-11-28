@@ -11,6 +11,7 @@ import hr.fer.dsd.privtap.utils.mappers.ActionTypeMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,7 @@ public class ActionService {
         return actionRepository.findByTypeIdAndUserId(typeId,userId).isPresent();
     }
 
-    public void handler(Action action){
+    public void handler(Action action) throws URISyntaxException {
         //temporary
         for(int i = 0; i < action.getFields().size(); i++){
             System.out.println("field name: " + action.getFields().get(i).getName().toString() + " - value: "
@@ -90,6 +91,10 @@ public class ActionService {
                 actionTypeRepository.findById(action.getTypeId()).orElseThrow(NoSuchElementException::new));
         String endpoint = actionType.getUrl();
         ActionCaller actionCaller = new ActionCaller();
-        actionCaller.callAction(endpoint, action);
+        //actionCaller.callAction(endpoint, action);
+
+        //actionCaller.secondAttempt(endpoint, action);
+        //actionCaller.blockingCall(endpoint, action);
+        actionCaller.blockingCall2(endpoint, action);
     }
 }
