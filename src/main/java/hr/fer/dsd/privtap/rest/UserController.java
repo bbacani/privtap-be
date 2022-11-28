@@ -5,10 +5,13 @@ import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @AllArgsConstructor
 @RestController
@@ -24,7 +27,20 @@ public class UserController {
 
     @GetMapping("me")
     public String getCurrentUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = "";
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            String str = principal.toString();
+            Pattern pattern = Pattern.compile(", name=(.*?),");
+            Matcher matcher = pattern.matcher(str);
+            while (matcher.find()) {
+                username = matcher.group(1);
+            }
+;        }
+        return username;
+//        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
     @GetMapping("/user/{userId}")
