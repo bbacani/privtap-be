@@ -12,6 +12,6 @@ public class ActionTest {
 
     @PostMapping()
     public void letsSeeThisAction(@RequestBody Action action){
-        System.out.println("action test? :" + action.toString());
+        System.out.println(action.toString());
     }
 }
