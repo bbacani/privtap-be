@@ -29,20 +29,18 @@ public class TriggerListener {
                         .getTypeId()
                         .equals(event.getTrigger().getTypeId()))
                 .collect(Collectors.toSet());
-        for(var a : automations){
-            var action = a.getAction();
-            System.out.println(action.getName());
-            var fields = new ArrayList<RequestField>();
-            for(RequestField f : action.getFields()){
-                var eachField = ((RequestField)f.getName().getRelatedClass()).buildDefault(f.getName());
-                for(RequestField triggerField : event.getTrigger().getFields()){
-                    if (triggerField.getName().equals(f.getName())){
-                        eachField.setValue(triggerField.getValue());
-                    }
-                }
-                fields.add(eachField);
+        for(var automation : automations){
+            var action = automation.getAction();
+            var actionFields = action.getFields();
+            var triggerFields = event.getTrigger().getFields();
+            for (RequestField actionField : actionFields) {
+                var triggerField = triggerFields
+                        .stream()
+                        .filter(requestField -> requestField.getName().equals(actionField.getName()))
+                        .findAny().get();
+                var triggerFieldValue = triggerField.getValue();
+                actionField.setValue(triggerFieldValue);
             }
-            action.setFields(fields);
             actionService.handler(action);
         }
     }

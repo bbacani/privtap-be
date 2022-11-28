@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
 import java.util.Collections;
 
 public class ActionCaller {
@@ -20,6 +23,12 @@ public class ActionCaller {
         ResponseEntity<Action> response = template.postForEntity(url, request, Action.class);
 
         System.out.println("status code" + response.getStatusCode());
+    }
+
+    public void secondAttempt(String url, Action action){
+        WebClient client = WebClient.create();
+        WebClient.UriSpec<WebClient.RequestBodySpec> uriSpec = client.post();
+        WebClient.RequestBodySpec bodySpec = uriSpec.uri(url);
     }
 
 }

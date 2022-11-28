@@ -91,7 +91,5 @@ public class ActionService {
         String endpoint = actionType.getUrl();
         ActionCaller actionCaller = new ActionCaller();
         actionCaller.callAction(endpoint, action);
-
-
     }
 }
