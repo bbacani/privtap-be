@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.service;
 
+import hr.fer.dsd.privtap.model.requestField.RequestField;
 import hr.fer.dsd.privtap.model.trigger.TriggerEvent;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -18,19 +19,29 @@ public class TriggerListener {
     @EventListener
     public void onApplicationEvent(TriggerEvent event){
         var userId = event.getTrigger().getUserId();
-        System.out.println("trigger occured");
-        var automations = userService.getAutomationByUser(userId);
+        var automations = userService.getAllAutomations(userId);
         automations = automations
                 .stream()
                 .filter(a -> a
-                        .getTriggerType()
-                        .getId()
+                        .getTrigger()
+                        .getTypeId()
                         .equals(event.getTrigger().getTypeId()))
                 .collect(Collectors.toSet());
-        for(var a : automations){
-            var action = actionService.getByTypeAndUser(a.getActionType().getId(),userId);
-            //action.setFields();
-            //set actionFields and call a method to send the action
+        for(var automation : automations){
+            var action = automation.getAction();
+            var actionFields = action.getFields();
+            var triggerFields = event.getTrigger().getFields();
+            if(!actionFields.isEmpty()){
+                for (RequestField actionField : actionFields) {
+                    var triggerField = triggerFields
+                            .stream()
+                            .filter(requestField -> requestField.getName().equals(actionField.getName()))
+                            .findAny().get();
+                    var triggerFieldValue = triggerField.getValue();
+                    actionField.setValue(triggerFieldValue);
+                }
+            }
+            actionService.handler(action);
         }
     }
 }

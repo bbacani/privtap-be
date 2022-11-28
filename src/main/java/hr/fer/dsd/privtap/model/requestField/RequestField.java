@@ -12,6 +12,8 @@ import hr.fer.dsd.privtap.model.requestField.textFields.Title;
 import hr.fer.dsd.privtap.model.requestField.userInfo.UserInfo;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
@@ -23,7 +25,7 @@ import lombok.Data;
         @JsonSubTypes.Type(value = Image.class, name = "image"),
         @JsonSubTypes.Type(value = Date.class, name = "date"),
 })
-public abstract class RequestField {
+public abstract class RequestField implements Serializable {
     private RequestFieldName name;
     private Object value;
     public abstract RequestField buildDefault(RequestFieldName name);

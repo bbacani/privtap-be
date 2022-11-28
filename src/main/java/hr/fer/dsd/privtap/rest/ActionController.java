@@ -22,8 +22,7 @@ public class ActionController {
 
     @PatchMapping("/{actionId}")
     public Action updateAction(@PathVariable String actionId, @RequestBody Action action) {
-        action.setId(actionId);
-        return service.update(action);
+        return service.update(actionId, action);
     }
 
     @GetMapping("/{actionId}")
