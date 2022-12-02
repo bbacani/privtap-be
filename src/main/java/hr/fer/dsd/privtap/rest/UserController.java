@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.rest;
 
+import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.service.UserService;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @RestController
@@ -41,4 +43,13 @@ public class UserController {
         return service.registerAutomation(userId, request);
     }
 
+    @DeleteMapping("/automation/{userId}")
+    public void deleteAutomation(@PathVariable @NotNull String userId, @RequestBody Automation automation) {
+        service.deleteAutomation(userId, automation);
+    }
+
+    @GetMapping("/automation/{userId}")
+    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
+        return service.getAllAutomations(userId);
+    }
 }

@@ -1,10 +1,8 @@
 package hr.fer.dsd.privtap.rest;
 
-import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.trigger.Trigger;
 import hr.fer.dsd.privtap.service.TriggerPublisher;
 import hr.fer.dsd.privtap.service.TriggerService;
-import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +23,7 @@ public class TriggerController {
 
     @PatchMapping("/{triggerId}")
     public Trigger updateTrigger(@PathVariable @NotNull String triggerId, @RequestBody Trigger trigger) {
-        trigger.setId(triggerId);
-        return service.update(trigger);
+        return service.update(triggerId, trigger);
     }
 
     @GetMapping("/{triggerId}")
@@ -39,8 +36,8 @@ public class TriggerController {
          return service.getAll();
     }
 
-    @PostMapping("/occurance")
-    public void triggerOccurance(@RequestBody Trigger trigger){
+    @PostMapping("/occurrence")
+    public void triggerOccurrence(@RequestBody Trigger trigger) {
         if(null==trigger.getUserId())
             for( var user : service.findUserIds(trigger.getTypeId())){
                 trigger.setUserId(user);

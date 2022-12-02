@@ -19,6 +19,7 @@ public class ActionTypeEntity {
     private String name;
     private String description;
     private List<String> requestFieldsNames;
+    private String url;
     private Instant createdAt;
     private Instant updatedAt;
 }
