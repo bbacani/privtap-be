@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Document(collection = "actionTypes")
 public class ActionTypeEntity {
+
     @Id
     private String id;
     private String platform;

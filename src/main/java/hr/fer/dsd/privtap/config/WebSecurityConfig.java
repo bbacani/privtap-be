@@ -1,9 +1,5 @@
 package hr.fer.dsd.privtap.config;
 
-import hr.fer.dsd.privtap.security.oauth2.CustomOAuth2UserService;
-import hr.fer.dsd.privtap.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import hr.fer.dsd.privtap.security.oauth2.OAuth2AuthenticationFailureHandler;
-import hr.fer.dsd.privtap.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,18 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
-
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-
-    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
-
-    @Bean
-    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
-        return new HttpCookieOAuth2AuthorizationRequestRepository();
-    }
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -40,21 +24,7 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .mvcMatchers("/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .oauth2Login()
-                    .authorizationEndpoint()
-                        .baseUri("/oauth2/authorize")
-                        .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-                        .and()
-                    .redirectionEndpoint()
-                        .baseUri("/oauth2/callback/*")
-                        .and()
-                    .userInfoEndpoint()
-                        .userService(customOAuth2UserService)
-                        .and()
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailureHandler);
+                .anyRequest().authenticated();
 
         return http.build();
     }

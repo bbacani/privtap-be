@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Document(collection = "triggerTypes")
 public class TriggerTypeEntity {
+
     @Id
     private String id;
     private String platform;

@@ -20,5 +20,4 @@ public class UserEntity {
     private String username;
     private String email;
     private Set<Automation> automations;
-
 }
