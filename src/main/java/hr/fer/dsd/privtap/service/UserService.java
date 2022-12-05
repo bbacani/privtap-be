@@ -5,12 +5,14 @@ import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.trigger.Trigger;
+import hr.fer.dsd.privtap.model.user.PrivacyPreference;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.utils.mappers.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -37,6 +39,7 @@ public class UserService {
     public void create(User user) {
         var entity = UserMapper.INSTANCE.toEntity(user);
         entity.setAutomations(new HashSet<>());
+        entity.setFieldsAuthorization(new ArrayList<>());
         userRepository.save(entity);
     }
 
@@ -91,4 +94,24 @@ public class UserService {
         return user.getAutomations();
     }
 
+    public User registerPrivacyPreference(String userId, List<PrivacyPreference> fieldsAuthorization ) {
+        var user = getById(userId);
+        for (var field : fieldsAuthorization) {
+            var platform= field.getPlatform();
+            var preference= user.getFieldsAuthorization().stream().filter(pref-> pref.getPlatform().equals(platform)).findAny();
+            if (preference.isEmpty())
+                user.getFieldsAuthorization().add(field);
+            else preference.get().getPreferences().forEach((key,value) ->
+                    field.getPreferences().merge(key,value, (list1, list2) -> list1.addAll(list2) ? list1.stream().distinct().collect(Collectors.toList()) : list1));
+        }
+        var entity = UserMapper.INSTANCE.toEntity(user);
+        userRepository.save(entity);
+        return user;
+
+    }
+
+    public List<PrivacyPreference> getPrivacyPreferences(String userId) {
+        var user = getById(userId);
+        return user.getFieldsAuthorization();
+    }
 }

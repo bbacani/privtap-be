@@ -2,11 +2,14 @@ package hr.fer.dsd.privtap.rest;
 
 import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
+import hr.fer.dsd.privtap.model.user.PrivacyPreference;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/")
+@Validated
 public class UserController {
 
     private final UserService service;
@@ -49,7 +53,18 @@ public class UserController {
     }
 
     @GetMapping("/automation/{userId}")
-    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
+    public Set<Automation> getAllAutomations(@Valid @PathVariable @NotNull String userId) {
         return service.getAllAutomations(userId);
     }
+
+    @PostMapping("/preferences/{userId}")
+    public User registerPrivacyPreference(@PathVariable @NotNull String userId, @RequestBody List<PrivacyPreference> fieldsAuthorization){
+        return service.registerPrivacyPreference(userId, fieldsAuthorization);
+    }
+
+    @GetMapping("/getPreferences/{userId}")
+    public List<PrivacyPreference> getPrivacyPreferences(@PathVariable @NotNull String userId){
+        return service.getPrivacyPreferences(userId);
+    }
+
 }
