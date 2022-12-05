@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Platform extends GenericUser {
-
+    private String name;
     private List<TriggerType> triggers;
     private List<ActionType> actions;
 

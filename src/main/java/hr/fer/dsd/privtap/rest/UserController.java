@@ -51,8 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/automation/{userId}")
-    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId, @CurrentUser OAuth2User oAuth2User) {
-        System.out.println(oAuth2User);
+    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
         return service.getAllAutomations(userId);
     }
 }

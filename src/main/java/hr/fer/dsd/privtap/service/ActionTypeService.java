@@ -3,6 +3,7 @@ package hr.fer.dsd.privtap.service;
 import hr.fer.dsd.privtap.domain.repositories.ActionTypeRepository;
 import hr.fer.dsd.privtap.model.action.ActionType;
 import hr.fer.dsd.privtap.utils.mappers.ActionTypeMapper;
+import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +16,18 @@ import java.util.NoSuchElementException;
 public class ActionTypeService {
 
     private final ActionTypeRepository actionTypeRepository;
+    private final PlatformService platformService;
 
     public ActionType create(ActionType action) {
         var entity = ActionTypeMapper.INSTANCE.toEntity(action);
         entity.setCreatedAt(Instant.now());
         entity.setUpdatedAt(Instant.now());
         var savedEntity = actionTypeRepository.save(entity);
+
+        var platform = platformService.getByName(action.getName());
+        //modificare la platform su mongo di modo che venga aggiunta questa action alla giusta platform
+
+
         return ActionTypeMapper.INSTANCE.fromEntity(savedEntity);
     }
 
