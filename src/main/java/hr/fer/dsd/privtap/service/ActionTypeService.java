@@ -24,8 +24,14 @@ public class ActionTypeService {
         entity.setUpdatedAt(Instant.now());
         var savedEntity = actionTypeRepository.save(entity);
 
-        var platform = platformService.getByName(action.getName());
-        //modificare la platform su mongo di modo che venga aggiunta questa action alla giusta platform
+        //saving in the platform doc
+        var platformEntity = PlatformMapper.INSTANCE.toEntity(platformService.getByName(action.getPlatform()));
+        var platform = platformService.getByName(action.getPlatform());
+        platform.getActions().add(action);
+        System.out.println(platform);
+        var updatedEntity = PlatformMapper.INSTANCE.updateEntity(platformEntity, platform);
+        platformService.save(updatedEntity);
+
 
 
         return ActionTypeMapper.INSTANCE.fromEntity(savedEntity);

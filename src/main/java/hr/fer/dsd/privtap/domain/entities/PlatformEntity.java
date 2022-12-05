@@ -20,6 +20,7 @@ public class PlatformEntity {
     private String id;
     private String username;
     private String email;
+    private String name;
     private Set<TriggerType> triggers;
     private Set<ActionType> actions;
 }

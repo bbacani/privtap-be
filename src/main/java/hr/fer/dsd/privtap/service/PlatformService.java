@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.service;
 
+import hr.fer.dsd.privtap.domain.entities.PlatformEntity;
 import hr.fer.dsd.privtap.domain.repositories.PlatformRepository;
 import hr.fer.dsd.privtap.model.action.ActionType;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
@@ -14,17 +15,15 @@ import java.util.NoSuchElementException;
 @Service
 @AllArgsConstructor
 public class PlatformService {
-     private PlatformRepository platformRepository;
+     private final PlatformRepository platformRepository;
 
      public Platform getByName(String name) {
           return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
      }
 
-     public Platform update(Platform platform) {
-          var entity = platformRepository.findByName(platform.getName()).orElseThrow(NoSuchElementException::new);
-          //MISSING
-
-
+     public void save(PlatformEntity platformEntity){
+          platformRepository.save(platformEntity);
+          System.out.println(PlatformMapper.INSTANCE.fromEntity(platformEntity).toString());
      }
 
      public void create(Platform platform) {
