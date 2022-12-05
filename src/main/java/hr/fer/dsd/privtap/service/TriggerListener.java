@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TriggerListener {
 
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
     private ActionService actionService;
 
 
     @EventListener
     public void onApplicationEvent(TriggerEvent event){
         var userId = event.getTrigger().getUserId();
-        var automations = userService.getAllAutomations(userId);
+        var automations = userServiceImpl.getAllAutomations(userId);
         automations = automations
                 .stream()
                 .filter(a -> a

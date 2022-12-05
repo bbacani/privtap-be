@@ -14,6 +14,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000", "http://privtap-bucket.s3-website.eu-central-1.amazonaws.com/")
                 .allowedMethods("*")
+                .allowedHeaders("*")
                 .allowCredentials(true);
     }
 }
