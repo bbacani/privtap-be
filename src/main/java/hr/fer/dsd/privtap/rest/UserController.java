@@ -3,8 +3,10 @@ package hr.fer.dsd.privtap.rest;
 import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
+import hr.fer.dsd.privtap.security.CurrentUser;
 import hr.fer.dsd.privtap.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -49,7 +51,8 @@ public class UserController {
     }
 
     @GetMapping("/automation/{userId}")
-    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
+    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId, @CurrentUser OAuth2User oAuth2User) {
+        System.out.println(oAuth2User);
         return service.getAllAutomations(userId);
     }
 }

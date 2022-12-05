@@ -12,9 +12,6 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-    private String id;
-    private String username;
-    private String email;
+public class User extends GenericUser {
     private Set<Automation> automations;
 }
