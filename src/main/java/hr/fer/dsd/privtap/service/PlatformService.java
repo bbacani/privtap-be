@@ -15,27 +15,27 @@ import java.util.NoSuchElementException;
 @Service
 @AllArgsConstructor
 public class PlatformService {
-     private final PlatformRepository platformRepository;
+    private final PlatformRepository platformRepository;
 
-     public Platform getByName(String name) {
-          return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
-     }
+    public Platform getByName(String name) {
+        return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
+    }
 
-     public void save(PlatformEntity platformEntity){
-          platformRepository.save(platformEntity);
-          System.out.println(PlatformMapper.INSTANCE.fromEntity(platformEntity).toString());
-     }
+    public void save(PlatformEntity platformEntity){
+        platformRepository.save(platformEntity);
+        System.out.println(PlatformMapper.INSTANCE.fromEntity(platformEntity).toString());
+    }
 
-     public void create(Platform platform) {
-          var entity = PlatformMapper.INSTANCE.toEntity(platform);
-          platformRepository.save(entity);
-     }
+    public void create(Platform platform) {
+        var entity = PlatformMapper.INSTANCE.toEntity(platform);
+        platformRepository.save(entity);
+    }
 
-     public List<ActionType> getAllActions(String name) {
-          return getByName(name).getActions();
-     }
+    public List<ActionType> getAllActions(String name) {
+        return getByName(name).getActions();
+    }
 
-     public List<TriggerType> getAllTriggers(String name) {
-          return getByName(name).getTriggers();
-     }
+    public List<TriggerType> getAllTriggers(String name) {
+        return getByName(name).getTriggers();
+    }
 }
