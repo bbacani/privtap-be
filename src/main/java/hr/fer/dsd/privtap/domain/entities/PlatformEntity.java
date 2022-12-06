@@ -8,12 +8,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "platforms")
+// TODO: 06.12.2022. revert this to "platforms"
+@Document(collection = "newPlatforms")
 public class PlatformEntity {
 
     @Id
@@ -21,6 +22,9 @@ public class PlatformEntity {
     private String username;
     private String email;
     private String name;
-    private Set<TriggerType> triggers;
-    private Set<ActionType> actions;
+    private String color;
+    private String oauthUrl;
+    private List<TriggerType> triggers;
+    private List<ActionType> actions;
+    private List<String> oauthScopes;
 }

@@ -42,6 +42,6 @@ public class TriggerTypeController {
 
     @GetMapping("/platforms")
     public List<String> getAllPlatforms(){
-        return getAllTriggerTypes().stream().map(TriggerType::getPlatform).distinct().collect(Collectors.toList());
+        return getAllTriggerTypes().stream().map(TriggerType::getPlatformName).distinct().collect(Collectors.toList());
     }
 }

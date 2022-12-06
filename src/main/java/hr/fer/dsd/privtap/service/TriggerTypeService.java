@@ -32,11 +32,11 @@ public class TriggerTypeService {
         var platform = new Platform();
         var platformEntity = new PlatformEntity();
         try{
-            platform = platformService.getByName(triggerType.getPlatform());
+            platform = platformService.getByName(triggerType.getPlatformName());
         }catch (NoSuchElementException e){
             //temporary since login is not implemented yet
             //the platform will be for sure already present
-            platform = platformService.create(triggerType.getPlatform());
+//            platform = platformService.create(triggerType.getPlatform());
         }
         var triggerCreated = TriggerTypeMapper.INSTANCE.fromEntity(savedEntity);
         platform.getTriggers().add(triggerCreated);
@@ -52,7 +52,7 @@ public class TriggerTypeService {
         var entity = repository.findById(triggerType.getId()).orElseThrow(NoSuchElementException::new);
         var updatedEntity = TriggerTypeMapper.INSTANCE.updateEntity(entity, triggerType);
         repository.save(updatedEntity);
-        var platform = platformService.getByName(triggerType.getPlatform());
+        var platform = platformService.getByName(triggerType.getPlatformName());
         var triggerToChange = platform.getTriggers().stream().filter(triggerType1 -> triggerType1.getId().equals(triggerId)).findAny();
         platform.getTriggers().remove(triggerToChange.get());
         platform.getTriggers().add(triggerType);

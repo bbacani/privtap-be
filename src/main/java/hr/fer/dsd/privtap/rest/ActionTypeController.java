@@ -42,6 +42,6 @@ public class ActionTypeController {
 
     @GetMapping("/platforms")
     public List<String> getAllPlatforms() {
-        return getAllActionTypes().stream().map(ActionType::getPlatform).distinct().collect(Collectors.toList());
+        return getAllActionTypes().stream().map(ActionType::getPlatformName).distinct().collect(Collectors.toList());
     }
 }

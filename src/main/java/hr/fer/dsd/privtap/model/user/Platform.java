@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @SuperBuilder (toBuilder = true)
@@ -18,7 +19,8 @@ import java.util.List;
 public class Platform extends GenericUser {
     private String name;
     private String color;
+    private String oauthUrl;
     private List<TriggerType> triggers;
     private List<ActionType> actions;
-
+    private List<String> oauthScopes;
 }

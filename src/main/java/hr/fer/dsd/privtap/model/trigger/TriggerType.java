@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class TriggerType {
     private String id;
-    private String platform;
+    private String platformName;
     private String name;
     private String description;
     private List<RequestFieldName> requestFieldsNames;

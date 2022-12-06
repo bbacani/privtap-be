@@ -28,11 +28,11 @@ public class ActionTypeService {
         var platform = new Platform();
         var platformEntity = new PlatformEntity();
         try{
-            platform = platformService.getByName(action.getPlatform());
+            platform = platformService.getByName(action.getPlatformName());
         }catch (NoSuchElementException e){
             //temporary since login is not implemented yet
             //the platform will be for sure already present
-            platform = platformService.create(action.getPlatform());
+//            platform = platformService.create(action.getPlatformName());
         }
         var actionCreated = ActionTypeMapper.INSTANCE.fromEntity(savedEntity);
         platform.getActions().add(actionCreated);
@@ -49,7 +49,7 @@ public class ActionTypeService {
         var updatedEntity = ActionTypeMapper.INSTANCE.updateEntity(entity, actionType);
         actionTypeRepository.save(updatedEntity);
 
-        var platform = platformService.getByName(actionType.getPlatform());
+        var platform = platformService.getByName(actionType.getPlatformName());
         var actionToChange = platform.getActions().stream().filter(actionType1 -> actionType1.getId().equals(actionTypeId)).findAny();
         platform.getActions().remove(actionToChange.get());
         platform.getActions().add(actionType);

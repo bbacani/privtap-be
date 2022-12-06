@@ -9,9 +9,7 @@ import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -33,13 +31,11 @@ public class PlatformService {
         return PlatformMapper.INSTANCE.fromEntity(updatedEntity);
     }
 
-    public Platform create(String name) {
-        Platform platform = new Platform();
-        platform.setName(name);
-        var actions = new ArrayList<ActionType>();
-        var triggers = new ArrayList<TriggerType>();
-        platform.setActions(actions);
-        platform.setTriggers(triggers);
+    public Platform create(Platform platform) {
+        platform.setActions(new ArrayList<ActionType>());
+        platform.setTriggers(new ArrayList<TriggerType>());
+        platform.setOauthScopes(new ArrayList<String>());
+
         var entity = PlatformMapper.INSTANCE.toEntity(platform);
         platformRepository.save(entity);
         return PlatformMapper.INSTANCE.fromEntity(entity);

@@ -17,6 +17,11 @@ public class PlatformController {
 
     private PlatformService platformService;
 
+    @PostMapping
+    public Platform registerPlatform(@RequestBody Platform platform) {
+        return platformService.create(platform);
+    }
+
     @GetMapping("/{name}")
     public Platform getByName(@PathVariable @NotNull String name) {
         return platformService.getByName(name);
