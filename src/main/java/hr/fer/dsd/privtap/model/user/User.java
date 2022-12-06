@@ -2,14 +2,16 @@ package hr.fer.dsd.privtap.model.user;
 
 import hr.fer.dsd.privtap.model.automation.Automation;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
 @Data
-@Builder
+@SuperBuilder (toBuilder = true)
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends GenericUser {

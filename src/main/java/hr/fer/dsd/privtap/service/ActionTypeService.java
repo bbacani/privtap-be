@@ -1,13 +1,16 @@
 package hr.fer.dsd.privtap.service;
 
+import hr.fer.dsd.privtap.domain.entities.PlatformEntity;
 import hr.fer.dsd.privtap.domain.repositories.ActionTypeRepository;
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.user.Platform;
 import hr.fer.dsd.privtap.utils.mappers.ActionTypeMapper;
 import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,18 +26,23 @@ public class ActionTypeService {
         entity.setCreatedAt(Instant.now());
         entity.setUpdatedAt(Instant.now());
         var savedEntity = actionTypeRepository.save(entity);
-
-        //saving in the platform doc
-        var platformEntity = PlatformMapper.INSTANCE.toEntity(platformService.getByName(action.getPlatform()));
-        var platform = platformService.getByName(action.getPlatform());
-        platform.getActions().add(action);
-        System.out.println(platform);
+        var platform = new Platform();
+        var platformEntity = new PlatformEntity();
+        try{
+            platform = platformService.getByName(action.getPlatform());
+        }catch (NoSuchElementException e){
+            //temporary
+            platform.setName(action.getPlatform());
+            var actions = new ArrayList<ActionType>();
+            platform.setActions(actions);
+        }
+        var actionCreated = ActionTypeMapper.INSTANCE.fromEntity(savedEntity);
+        platform.getActions().add(actionCreated);
+        platformEntity = PlatformMapper.INSTANCE.toEntity(platform);
         var updatedEntity = PlatformMapper.INSTANCE.updateEntity(platformEntity, platform);
         platformService.save(updatedEntity);
-
-
-
-        return ActionTypeMapper.INSTANCE.fromEntity(savedEntity);
+        //platformService.update(platform);
+        return actionCreated;
     }
 
     public ActionType update(String actionTypeId, ActionType actionType) {
@@ -42,6 +50,13 @@ public class ActionTypeService {
         var entity = actionTypeRepository.findById(actionType.getId()).orElseThrow(NoSuchElementException::new);
         var updatedEntity = ActionTypeMapper.INSTANCE.updateEntity(entity, actionType);
         actionTypeRepository.save(updatedEntity);
+
+        var platform = platformService.getByName(actionType.getPlatform());
+        var actionToChange = platform.getActions().stream().filter(actionType1 -> actionType1.getId().equals(actionTypeId)).findAny();
+        platform.getActions().remove(actionToChange.get());
+        platform.getActions().add(actionType);
+        platformService.update(platform);
+
         return ActionTypeMapper.INSTANCE.fromEntity(updatedEntity);
     }
 

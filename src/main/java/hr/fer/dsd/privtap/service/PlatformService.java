@@ -18,12 +18,21 @@ public class PlatformService {
     private final PlatformRepository platformRepository;
 
     public Platform getByName(String name) {
+
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
     }
 
     public void save(PlatformEntity platformEntity){
+        //var platformEntity = PlatformMapper.INSTANCE.toEntity(platform);
+
         platformRepository.save(platformEntity);
-        System.out.println(PlatformMapper.INSTANCE.fromEntity(platformEntity).toString());
+    }
+
+    public Platform update(Platform platform) {
+        var entity = platformRepository.findByName(platform.getName()).orElseThrow(NoSuchElementException::new);
+        var updatedEntity = PlatformMapper.INSTANCE.updateEntity(entity, platform);
+        platformRepository.save(updatedEntity);
+        return PlatformMapper.INSTANCE.fromEntity(updatedEntity);
     }
 
     public void create(Platform platform) {
