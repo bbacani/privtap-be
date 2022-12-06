@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -31,16 +30,15 @@ public class ActionTypeService {
         try{
             platform = platformService.getByName(action.getPlatform());
         }catch (NoSuchElementException e){
-            //temporary
-            platform.setName(action.getPlatform());
-            var actions = new ArrayList<ActionType>();
-            platform.setActions(actions);
+            //temporary since login is not implemented yet
+            //the platform will be for sure already present
+            platform = platformService.create(action.getPlatform());
         }
         var actionCreated = ActionTypeMapper.INSTANCE.fromEntity(savedEntity);
         platform.getActions().add(actionCreated);
         platformEntity = PlatformMapper.INSTANCE.toEntity(platform);
-        var updatedEntity = PlatformMapper.INSTANCE.updateEntity(platformEntity, platform);
-        platformService.save(updatedEntity);
+        //var updatedEntity = PlatformMapper.INSTANCE.updateEntity(platformEntity, platform);
+        platformService.save(platformEntity);
         //platformService.update(platform);
         return actionCreated;
     }

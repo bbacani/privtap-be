@@ -9,6 +9,7 @@ import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -18,13 +19,10 @@ public class PlatformService {
     private final PlatformRepository platformRepository;
 
     public Platform getByName(String name) {
-
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
     }
 
     public void save(PlatformEntity platformEntity){
-        //var platformEntity = PlatformMapper.INSTANCE.toEntity(platform);
-
         platformRepository.save(platformEntity);
     }
 
@@ -35,9 +33,16 @@ public class PlatformService {
         return PlatformMapper.INSTANCE.fromEntity(updatedEntity);
     }
 
-    public void create(Platform platform) {
+    public Platform create(String name) {
+        Platform platform = new Platform();
+        platform.setName(name);
+        var actions = new ArrayList<ActionType>();
+        var triggers = new ArrayList<TriggerType>();
+        platform.setActions(actions);
+        platform.setTriggers(triggers);
         var entity = PlatformMapper.INSTANCE.toEntity(platform);
         platformRepository.save(entity);
+        return PlatformMapper.INSTANCE.fromEntity(entity);
     }
 
     public List<ActionType> getAllActions(String name) {
