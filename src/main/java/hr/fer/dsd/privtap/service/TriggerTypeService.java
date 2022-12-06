@@ -18,6 +18,7 @@ public class TriggerTypeService {
     private final TriggerTypeRepository repository;
 
     public TriggerType create(TriggerType triggerType) {
+        System.out.printf("yoooooo\n");
         var fieldsList = triggerType.getRequestFieldsNames();
         var entity = TriggerTypeMapper.INSTANCE.toEntity(triggerType);
         entity.setCreatedAt(Instant.now());

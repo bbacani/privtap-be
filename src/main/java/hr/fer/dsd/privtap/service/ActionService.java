@@ -63,7 +63,7 @@ public class ActionService {
     public Action createFromType(ActionType actionType,String userId) {
         var fieldsList = new ArrayList<RequestField>();
         for(var fieldName : actionType.getRequestFieldsNames()){
-            var field = ((RequestField)fieldName.getRelatedClass()).buildDefault(fieldName);
+            var field = ((RequestField)fieldName.getType().getRelatedClass()).buildDefault(fieldName);
             fieldsList.add(field);
         }
         Action action = Action.builder()
