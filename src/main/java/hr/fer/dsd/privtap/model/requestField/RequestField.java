@@ -26,7 +26,8 @@ import java.io.Serializable;
         @JsonSubTypes.Type(value = Date.class, name = "date"),
 })
 public abstract class RequestField implements Serializable {
-    private RequestFieldName name;
+    private RequestFieldType type;
+    private String maskedValue;
     private Object value;
-    public abstract RequestField buildDefault(RequestFieldName name);
+    public abstract RequestField buildDefault(RequestFieldType type, String maskedValue);
 }
