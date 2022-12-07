@@ -37,4 +37,35 @@ public class PlatformController {
         return platformService.getAllTriggers(name);
     }
 
+    @GetMapping("/{platformName}/getCode")
+    public void getCode(@PathVariable @NotNull String platformName, @RequestParam("code") String userCode) {
+        Platform platform = platformService.getByName(platformName);
+        platformService.getAuthToken(platform, userCode);
+    }
+
+    @GetMapping("/{platformName}/authorizationUrl")
+    public String getPlatformLogin(@PathVariable @NotNull String platformName) {
+        Platform platform = platformService.getByName(platformName);
+        return platformService.getAuthorizationURL(platform);
+    }
+
+    @PostMapping("/{platformName}/actionType")
+    public Platform registerActionType(@PathVariable @NotNull String platformName, @RequestBody ActionType actionType) {
+        return platformService.registerActionType(platformName, actionType);
+    }
+
+    @PostMapping("/{platformName}/triggerType")
+    public Platform registerTriggerType(@PathVariable @NotNull String platformName, @RequestBody TriggerType triggerType) {
+        return platformService.registerTriggerType(platformName, triggerType);
+    }
+
+    @GetMapping("/{platformName}/oauthScopes")
+    public List<String> getOAuthScopes(@PathVariable @NotNull String platformName) {
+        return platformService.getOAuthScopes(platformName);
+    }
+
+    @GetMapping("/{platformName}/testAction")
+    public void callAction(@PathVariable @NotNull String platformName) {
+        platformService.callAction();
+    }
 }

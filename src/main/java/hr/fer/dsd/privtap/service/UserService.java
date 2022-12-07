@@ -1,10 +1,13 @@
 package hr.fer.dsd.privtap.service;
 
+import hr.fer.dsd.privtap.domain.entities.UserEntity;
 import hr.fer.dsd.privtap.domain.repositories.UserRepository;
 import hr.fer.dsd.privtap.model.action.Action;
+import hr.fer.dsd.privtap.model.action.ActionType;
 import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.trigger.Trigger;
+import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.utils.mappers.UserMapper;
 import lombok.AllArgsConstructor;
@@ -18,9 +21,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final ActionTypeService actionTypeService;
-
-    private final TriggerTypeService triggerTypeService;
+    private final PlatformService platformService;
 
     private final ActionService actionService;
 
@@ -49,11 +50,11 @@ public class UserService {
     }
 
     public User registerAutomation(String userId, AutomationRequest request) {
-        var actionType = actionTypeService.get(request.getActionTypeId());
-        var triggerType = triggerTypeService.get(request.getTriggerTypeId());
-        var action = new Action();
-        var trigger = new Trigger();
-        var user = getById(userId);
+        ActionType actionType = platformService.getActionType(request.getActionTypePlatformName(), request.getActionTypeId());
+        TriggerType triggerType = platformService.getTriggerType(request.getTriggerTypePlatformName(), request.getTriggerTypeId());
+        Action action;
+        Trigger trigger;
+        User user = getById(userId);
         if(!actionService.existsByTypeIdAndUserId(actionType.getId(),userId))
             action = actionService.createFromType(actionType,userId);
         else action=actionService.getByTypeAndUser(actionType.getId(),userId);
@@ -61,7 +62,7 @@ public class UserService {
             trigger = triggerService.createFromType(triggerType,userId);
         else trigger=triggerService.getByTypeAndUser(triggerType.getId(),userId);
 
-        var automation = Automation.builder()
+        Automation automation = Automation.builder()
                 .id(UUID.randomUUID().toString())
                 .name(request.getName())
                 .description(request.getDescription())
@@ -72,22 +73,22 @@ public class UserService {
             throw new RuntimeException();
         }
         user.getAutomations().add(automation);
-        var entity = UserMapper.INSTANCE.toEntity(user);
+        UserEntity entity = UserMapper.INSTANCE.toEntity(user);
         userRepository.save(entity);
         return user;
     }
 
     public void deleteAutomation(String userId, Automation automation) {
-        var user = getById(userId);
+        User user = getById(userId);
         user.getAutomations().remove(automation);
-        var entity = UserMapper.INSTANCE.toEntity(user);
+        UserEntity entity = UserMapper.INSTANCE.toEntity(user);
         userRepository.save(entity);
         actionService.delete(automation.getAction().getId());
         triggerService.delete(automation.getTrigger().getId());
     }
 
     public Set<Automation> getAllAutomations(String userId) {
-        var user = getById(userId);
+        User user = getById(userId);
         return user.getAutomations();
     }
 

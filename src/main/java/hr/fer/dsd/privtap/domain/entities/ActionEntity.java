@@ -23,6 +23,7 @@ public class ActionEntity {
     private String typeId;
     private String description;
     private List<RequestField> fields;
+    private List<String> oauthScopes;
     private Instant createdAt;
     private Instant updatedAt;
 }

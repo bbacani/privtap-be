@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,11 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ActionType {
+    @Id
     private String id;
-    private String platformName;
     private String name;
     private String description;
     private List<RequestFieldName> requestFieldsNames;
+    private List<String> oauthScopes;
     private String url;
     private Instant createdAt;
     private Instant updatedAt;

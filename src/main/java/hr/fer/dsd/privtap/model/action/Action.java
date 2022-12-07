@@ -20,7 +20,9 @@ public class Action implements Serializable {
     private String name;
     private String typeId;
     private String description;
+    private String url;
     private List<RequestField> fields;
+    private List<String> oauthScopes;
     private Instant createdAt;
     private Instant updatedAt;
 }
