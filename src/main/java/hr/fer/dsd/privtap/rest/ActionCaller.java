@@ -19,9 +19,15 @@ public class ActionCaller {
         // TODO: 08.12.2022. create a switch case here for post/put/delete
         client.put()
                 .uri(url)
-//                .body(Mono.just(action), Action.class)
                 .retrieve()
                 .toEntity(String.class)
                 .subscribe(stringResponseEntity -> {});
+
+//        client.post()
+//                .uri(url)
+//                .body(Mono.just(action), Action.class)
+//                .retrieve()
+//                .toEntity(String.class)
+//                .subscribe(stringResponseEntity -> {});
     }
 }
