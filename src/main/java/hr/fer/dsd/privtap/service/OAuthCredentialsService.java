@@ -25,9 +25,17 @@ public class OAuthCredentialsService {
         return OAuthCredentialsMapper.INSTANCE.fromEntity(updatedEntity);
     }
 
+    public boolean existsByUserIdAndPlatformName(String userId, String platformName) {
+        return oauthCredentialsRepository.findByUserIdAndPlatformName(userId, platformName).isPresent();
+    }
+
     public OAuthCredentials create(OAuthCredentials credentials) {
         OAuthCredentialsEntity entity = OAuthCredentialsMapper.INSTANCE.toEntity(credentials);
-        save(entity);
+        if (existsByUserIdAndPlatformName(entity.getUserId(), entity.getPlatformName())) {
+            update(credentials);
+        } else {
+            save(entity);
+        }
         return OAuthCredentialsMapper.INSTANCE.fromEntity(entity);
     }
 
