@@ -1,7 +1,7 @@
 package hr.fer.dsd.privtap.model.requestField.textFields;
 
 import hr.fer.dsd.privtap.model.requestField.RequestField;
-import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -12,9 +12,9 @@ public class Description extends RequestField {
         this.setValue(content);
     }
 
-    public Description buildDefault(RequestFieldName name){
-        this.setName(name);
-        this.setValue(null);
+    public Description buildDefault(RequestFieldType type, String maskedValue) {
+        this.setType(type);
+        this.setMaskedValue(maskedValue);
         return this;
     }
 }

@@ -59,14 +59,15 @@ public class ActionService {
 
     public Action createFromType(ActionType actionType, String userId) {
         var fieldsList = new ArrayList<RequestField>();
-        for(var fieldName : actionType.getRequestFieldsNames()){
-            var field = ((RequestField)fieldName.getRelatedClass()).buildDefault(fieldName);
+        // TODO: 08.12.2022. check this
+        for(RequestField field : actionType.getRequestFields()){
             fieldsList.add(field);
         }
         Action action = Action.builder()
                 .userId(userId)
                 .name(actionType.getName())
                 .typeId(actionType.getId())
+                .url(actionType.getUrl())
                 .description(actionType.getDescription())
                 .fields(fieldsList).build();
 

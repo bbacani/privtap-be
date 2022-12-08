@@ -5,6 +5,7 @@ import hr.fer.dsd.privtap.domain.repositories.PlatformRepository;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.auth0.AuthTokenResponse;
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.requestField.RequestField;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
 import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;

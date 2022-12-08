@@ -22,6 +22,7 @@ public class ActionEntity {
     private String name;
     private String typeId;
     private String description;
+    private String url;
     private List<RequestField> fields;
     private List<String> oauthScopes;
     private Instant createdAt;
