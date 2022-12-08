@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @RestController
@@ -60,10 +61,11 @@ public class PlatformController {
     }
 
     @GetMapping("/{platformName}/oauthScopes")
-    public List<String> getOAuthScopes(@PathVariable @NotNull String platformName) {
+    public Set<String> getOAuthScopes(@PathVariable @NotNull String platformName) {
         return platformService.getOAuthScopes(platformName);
     }
 
+    // TODO: 08.12.2022. remove this, this is for testing from postman
     @GetMapping("/{platformName}/testAction")
     public void callAction(@PathVariable @NotNull String platformName) {
         platformService.callAction();

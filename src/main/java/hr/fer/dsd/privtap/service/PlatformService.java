@@ -1,11 +1,13 @@
 package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.entities.PlatformEntity;
+import hr.fer.dsd.privtap.domain.repositories.OAuthCredentialsRepository;
 import hr.fer.dsd.privtap.domain.repositories.PlatformRepository;
 import hr.fer.dsd.privtap.model.action.Action;
-import hr.fer.dsd.privtap.model.auth0.AuthTokenResponse;
+import hr.fer.dsd.privtap.model.auth0.OAuthCredentials;
 import hr.fer.dsd.privtap.model.action.ActionType;
-import hr.fer.dsd.privtap.model.requestField.RequestField;
+import hr.fer.dsd.privtap.model.auth0.OAuthTokensResponse;
+import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
 import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
@@ -26,6 +28,7 @@ import java.util.*;
 @AllArgsConstructor
 public class PlatformService {
     private final PlatformRepository platformRepository;
+    private final OAuthCredentialsService oAuthCredentialsService;
 
     public Platform getByName(String name) {
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
@@ -36,8 +39,8 @@ public class PlatformService {
     }
 
     public Platform update(Platform platform) {
-        var entity = platformRepository.findByName(platform.getName()).orElseThrow(NoSuchElementException::new);
-        var updatedEntity = PlatformMapper.INSTANCE.updateEntity(entity, platform);
+        PlatformEntity entity = platformRepository.findByName(platform.getName()).orElseThrow(NoSuchElementException::new);
+        PlatformEntity updatedEntity = PlatformMapper.INSTANCE.updateEntity(entity, platform);
         platformRepository.save(updatedEntity);
         return PlatformMapper.INSTANCE.fromEntity(updatedEntity);
     }
@@ -45,10 +48,10 @@ public class PlatformService {
     public Platform create(Platform platform) {
         platform.setActions(new ArrayList<ActionType>());
         platform.setTriggers(new ArrayList<TriggerType>());
-        platform.setOauthScopes(new ArrayList<String>());
+        platform.setOauthScopes(new HashSet<String>());
 
-        var entity = PlatformMapper.INSTANCE.toEntity(platform);
-        platformRepository.save(entity);
+        PlatformEntity entity = PlatformMapper.INSTANCE.toEntity(platform);
+        save(entity);
         return PlatformMapper.INSTANCE.fromEntity(entity);
     }
 
@@ -103,9 +106,19 @@ public class PlatformService {
                 .body(BodyInserters.fromValue(bodyValues))
                     .exchange()
                     .block()
-                .toEntity(AuthTokenResponse.class)
+                .toEntity(OAuthTokensResponse.class)
                 .subscribe(response -> {
-                    System.out.println(response.getBody().getAccess_token());
+                    OAuthCredentials credentials = OAuthCredentials.builder()
+                            .platformName(platform.getName())
+                            .accessToken(response.getBody().getAccess_token())
+                            .refreshToken(response.getBody().getRefresh_token())
+                            .tokenType(response.getBody().getToken_type())
+                            .expiresIn(response.getBody().getExpires_in())
+                            .scope(response.getBody().getScope())
+                            .createdAt(Instant.now())
+                            .updatedAt(Instant.now())
+                            .build();
+                    oAuthCredentialsService.create(credentials);
                 });
         } catch (Exception e) {
             System.out.println(e.getStackTrace());
@@ -116,7 +129,6 @@ public class PlatformService {
         return "http://localhost:8080/platform/" + platformName + "/getCode";
     }
 
-    // TODO: 08.12.2022. add scopes to platform 
     public Platform registerTriggerType(String platformName, TriggerType triggerType) {
         triggerType.setCreatedAt(Instant.now());
         triggerType.setUpdatedAt(Instant.now());
@@ -127,10 +139,13 @@ public class PlatformService {
         triggerTypes.add(triggerType);
         platform.setTriggers(triggerTypes);
 
+        Set<String> oauthScopes = platform.getOauthScopes();
+        oauthScopes.addAll(triggerType.getOauthScopes());
+        platform.setOauthScopes(oauthScopes);
+
         return update(platform);
     }
 
-    // TODO: 08.12.2022. add scopes to platform
     public Platform registerActionType(String platformName, ActionType actionType) {
         actionType.setCreatedAt(Instant.now());
         actionType.setUpdatedAt(Instant.now());
@@ -141,21 +156,25 @@ public class PlatformService {
         actionTypes.add(actionType);
         platform.setActions(actionTypes);
 
+        Set<String> oauthScopes = platform.getOauthScopes();
+        oauthScopes.addAll(actionType.getOauthScopes());
+        platform.setOauthScopes(oauthScopes);
+
         return update(platform);
     }
 
-    public List<String> getOAuthScopes(String platformName) {
+    public Set<String> getOAuthScopes(String platformName) {
         PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
         Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
 
         return platform.getOauthScopes();
     }
 
-    // TODO: 08.12.2022. remove this
+    // TODO: 08.12.2022. remove this, this is just mock for action
     ActionService actionService;
 
     public void callAction() {
-        Action action = actionService.createFromType(getAllActions("spotify").get(0), "");
+        Action action = actionService.createFromType(getAllActions("spotify").get(0), "1");
         actionService.handler(action);
     }
 }

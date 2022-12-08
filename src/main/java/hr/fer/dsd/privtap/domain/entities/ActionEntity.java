@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.domain.entities;
 
+import hr.fer.dsd.privtap.model.auth0.OAuthCredentials;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class ActionEntity {
     @Id
     private String id;
     private String userId;
+    private String platformName;
     private String name;
     private String typeId;
     private String description;

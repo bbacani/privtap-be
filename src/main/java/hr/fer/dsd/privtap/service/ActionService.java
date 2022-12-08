@@ -3,6 +3,7 @@ package hr.fer.dsd.privtap.service;
 import hr.fer.dsd.privtap.domain.repositories.ActionRepository;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.auth0.OAuthCredentials;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
 import hr.fer.dsd.privtap.rest.ActionCaller;
 import hr.fer.dsd.privtap.utils.mappers.ActionMapper;
@@ -19,6 +20,8 @@ import java.util.NoSuchElementException;
 public class ActionService {
 
     private final ActionRepository actionRepository;
+
+    private final OAuthCredentialsService oAuthCredentialsService;
 
     public Action create(Action action) {
         var entity = ActionMapper.INSTANCE.toEntity(action);
@@ -65,6 +68,7 @@ public class ActionService {
         }
         Action action = Action.builder()
                 .userId(userId)
+                .platformName(actionType.getPlatformName())
                 .name(actionType.getName())
                 .typeId(actionType.getId())
                 .url(actionType.getUrl())
@@ -80,7 +84,8 @@ public class ActionService {
 
     public void handler(Action action){
         String endpoint = action.getUrl();
+        OAuthCredentials oAuthCredentials = oAuthCredentialsService.get(action.getUserId(), action.getPlatformName());
         ActionCaller actionCaller = new ActionCaller();
-        actionCaller.callAction(endpoint, action);
+        actionCaller.callAction(endpoint, action, oAuthCredentials);
     }
 }

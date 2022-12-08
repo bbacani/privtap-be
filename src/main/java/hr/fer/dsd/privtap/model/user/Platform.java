@@ -25,5 +25,5 @@ public class Platform extends GenericUser {
     private String clientSecret;
     private List<TriggerType> triggers;
     private List<ActionType> actions;
-    private List<String> oauthScopes;
+    private Set<String> oauthScopes;
 }

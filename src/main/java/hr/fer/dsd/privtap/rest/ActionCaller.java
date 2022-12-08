@@ -1,6 +1,7 @@
 package hr.fer.dsd.privtap.rest;
 
 import hr.fer.dsd.privtap.model.action.Action;
+import hr.fer.dsd.privtap.model.auth0.OAuthCredentials;
 import org.springframework.http.*;
 
 import org.springframework.web.reactive.function.client.WebClient;
@@ -9,10 +10,10 @@ import reactor.core.publisher.Mono;
 public class ActionCaller {
 
     // TODO: 08.12.2022. write this more universal, I have changed it to do the spotify play action
-    public void callAction(String url, Action action){
+    public void callAction(String url, Action action, OAuthCredentials oAuthCredentials) {
         WebClient client = WebClient.builder()
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + "BQBF_kRf2FmIRa0EuskfHF54IxwG19p0RyH9JXXjClCOI2waTzcXTTR62kgteMsfZIsd6_nHJHwBmLA22NRUX9r56q0HkII3DMXjngmrXykQznRZhRFX-lW00rqzDrRtiqPnarsVZu1bqPZCpHPiloLvnEn9DbRzBnM2hw1OZ6kTYiH7xOw5776qBNqZLSLRPGaXm5EiR4P49Q")
+                .defaultHeader(HttpHeaders.AUTHORIZATION, oAuthCredentials.getTokenType() + " " + oAuthCredentials.getAccessToken())
                 .build();
 
         // TODO: 08.12.2022. create a switch case here for post/put/delete

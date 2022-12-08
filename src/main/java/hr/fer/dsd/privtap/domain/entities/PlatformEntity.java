@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -29,5 +30,5 @@ public class PlatformEntity {
     private String clientSecret;
     private List<TriggerType> triggers;
     private List<ActionType> actions;
-    private List<String> oauthScopes;
+    private Set<String> oauthScopes;
 }

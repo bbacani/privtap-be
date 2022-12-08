@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -21,7 +22,7 @@ public class TriggerType {
     private String name;
     private String description;
     private List<RequestField> requestFields;
-    private List<String> oauthScopes;
+    private Set<String> oauthScopes;
     private Instant createdAt;
     private Instant updatedAt;
 }
