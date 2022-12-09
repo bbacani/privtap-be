@@ -58,13 +58,14 @@ public class UserController {
         return service.registerAutomation(userId, request);
     }
 
+    @PreAuthorize("hasRole('USER') and userPrincipal.getId().equals(#userId)")
     @DeleteMapping("/automation/{userId}")
     public void deleteAutomation(@PathVariable @NotNull String userId, @RequestBody Automation automation) {
         service.deleteAutomation(userId, automation);
     }
-
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @GetMapping("/automation/{userId}")
-    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
+    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId, @CurrentUser UserPrincipal userPrincipal) {
         return service.getAllAutomations(userId);
     }
 }
