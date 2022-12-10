@@ -53,19 +53,20 @@ public class UserController {
         return service.getAllUsers();
     }
 
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @PostMapping("/automation/{userId}")
     public User registerAutomation(@PathVariable @NotNull String userId, @RequestBody AutomationRequest request) {
         return service.registerAutomation(userId, request);
     }
 
-    @PreAuthorize("hasRole('USER') and userPrincipal.getId().equals(#userId)")
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @DeleteMapping("/automation/{userId}")
     public void deleteAutomation(@PathVariable @NotNull String userId, @RequestBody Automation automation) {
         service.deleteAutomation(userId, automation);
     }
     @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @GetMapping("/automation/{userId}")
-    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId, @CurrentUser UserPrincipal userPrincipal) {
+    public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
         return service.getAllAutomations(userId);
     }
 }

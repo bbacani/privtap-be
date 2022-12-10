@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 @Service
@@ -70,6 +71,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setUsername(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setImageUrl(oAuth2UserInfo.getImageUrl());
+        user.setAutomations(new HashSet<>());
         return userRepository.save(user);
     }
 
