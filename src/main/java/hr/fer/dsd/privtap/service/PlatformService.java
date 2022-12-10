@@ -63,8 +63,8 @@ public class PlatformService {
         return getByName(name).getTriggers();
     }
 
-    public ActionType getActionType(String name, String id) {
-        return getByName(name)
+    public ActionType getActionType(String platformName, String id) {
+        return getByName(platformName)
                 .getActions()
                 .stream()
                 .filter(actionType -> actionType.getId().equals(id))
@@ -72,8 +72,8 @@ public class PlatformService {
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    public TriggerType getTriggerType(String name, String id) {
-        return getByName(name)
+    public TriggerType getTriggerType(String platformName, String id) {
+        return getByName(platformName)
                 .getTriggers()
                 .stream()
                 .filter(triggerType -> triggerType.getId().equals(id))

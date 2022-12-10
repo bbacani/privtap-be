@@ -53,10 +53,10 @@ public class UserController {
         return service.getAllUsers();
     }
 
-//    @PostMapping("/automation/{userId}")
-//    public User registerAutomation(@PathVariable @NotNull String userId, @RequestBody AutomationRequest request) {
-//        return service.registerAutomation(userId, request);
-//    }
+    @PostMapping("/automation/{userId}")
+    public User registerAutomation(@PathVariable @NotNull String userId, @RequestBody AutomationRequest request) {
+        return service.registerAutomation(userId, request);
+    }
 
     @DeleteMapping("/automation/{userId}")
     public void deleteAutomation(@PathVariable @NotNull String userId, @RequestBody Automation automation) {

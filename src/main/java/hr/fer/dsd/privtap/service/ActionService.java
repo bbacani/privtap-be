@@ -57,7 +57,7 @@ public class ActionService {
 
     public Action getByTypeAndUser(String actionType, String userId) {
         return ActionMapper.INSTANCE.fromEntity(
-                actionRepository.findByTypeIdAndUserId(actionType,userId).orElseThrow(NoSuchElementException::new));
+                actionRepository.findByTypeIdAndUserId(actionType, userId).orElseThrow(NoSuchElementException::new));
     }
 
     public Action createFromType(ActionType actionType, String userId) {
