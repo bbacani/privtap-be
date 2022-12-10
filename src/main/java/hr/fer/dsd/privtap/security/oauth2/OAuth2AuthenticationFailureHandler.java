@@ -1,6 +1,6 @@
 package hr.fer.dsd.privtap.security.oauth2;
 
-import hr.fer.dsd.privtap.security.CookieUtils;
+import hr.fer.dsd.privtap.utils.CookieUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
