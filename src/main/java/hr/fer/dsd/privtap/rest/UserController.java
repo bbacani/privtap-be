@@ -7,9 +7,9 @@ import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.security.CurrentUser;
+import lombok.AllArgsConstructor;
 import hr.fer.dsd.privtap.security.UserPrincipal;
 import hr.fer.dsd.privtap.service.UserServiceImpl;
-import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 

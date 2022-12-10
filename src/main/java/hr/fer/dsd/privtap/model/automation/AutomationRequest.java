@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 public class AutomationRequest {
     private String name;
     private String description;
+    private String triggerTypePlatformName;
+    private String actionTypePlatformName;
     private String actionTypeId;
     private String triggerTypeId;
 }

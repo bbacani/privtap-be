@@ -35,7 +35,7 @@ public class TriggerListener {
                 for (RequestField actionField : actionFields) {
                     var triggerField = triggerFields
                             .stream()
-                            .filter(requestField -> requestField.getName().equals(actionField.getName()))
+                            .filter(requestField -> requestField.getType().equals(actionField.getType()))
                             .findAny().get();
                     var triggerFieldValue = triggerField.getValue();
                     actionField.setValue(triggerFieldValue);

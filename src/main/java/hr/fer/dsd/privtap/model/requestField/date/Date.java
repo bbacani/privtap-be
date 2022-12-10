@@ -1,7 +1,7 @@
 package hr.fer.dsd.privtap.model.requestField.date;
 
 import hr.fer.dsd.privtap.model.requestField.RequestField;
-import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,9 +14,10 @@ public class Date extends RequestField implements Serializable {
     public Date(String value) {
         this.setValue(value);
     }
-    public Date buildDefault(RequestFieldName name){
-        this.setName(name);
-        this.setValue(null);
+
+    public Date buildDefault(RequestFieldType type, String maskedValue) {
+        this.setType(type);
+        this.setMaskedValue(maskedValue);
         return this;
     }
 }
