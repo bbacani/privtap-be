@@ -10,7 +10,7 @@ import hr.fer.dsd.privtap.model.requestField.userInfo.UserInfo;
 
 import java.io.Serializable;
 
-public enum RequestFieldName implements Serializable {
+public enum RequestFieldType implements Serializable {
 
     date, image, location, content, description, title, userinfo;
 

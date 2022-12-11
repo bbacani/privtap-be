@@ -1,10 +1,16 @@
 package hr.fer.dsd.privtap.rest;
 
+import hr.fer.dsd.privtap.domain.entities.UserEntity;
+import hr.fer.dsd.privtap.domain.repositories.UserRepository;
+import hr.fer.dsd.privtap.exception.ResourceNotFoundException;
 import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
-import hr.fer.dsd.privtap.service.UserService;
+import hr.fer.dsd.privtap.security.CurrentUser;
 import lombok.AllArgsConstructor;
+import hr.fer.dsd.privtap.security.UserPrincipal;
+import hr.fer.dsd.privtap.service.UserServiceImpl;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,11 +23,20 @@ import java.util.Set;
 @RequestMapping("/")
 public class UserController {
 
-    private final UserService service;
+    private final UserRepository userRepository;
+
+    private final UserServiceImpl service;
 
     @GetMapping("/")
     public String home() {
         return "Home page!";
+    }
+
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('USER')")
+    public UserEntity getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+        return userRepository.findById(userPrincipal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
     }
 
     @GetMapping("/user/{userId}")

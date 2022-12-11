@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
@@ -17,14 +16,13 @@ import java.util.Set;
 @NoArgsConstructor
 public class Trigger {
     private String id;
-    @NotNull(message = "userId can not be null")
     private String userId;
-    @NotNull(message = "name can not be null")
+    private String platformName;
     private String name;
-    @NotNull(message = "typeId can not be null")
     private String typeId;
     private String description;
     private List<RequestField> fields;
+    private Set<String> oauthScopes;
     private Instant createdAt;
     private Instant updatedAt;
 }

@@ -1,7 +1,7 @@
 package hr.fer.dsd.privtap.model.requestField.userInfo;
 
 import hr.fer.dsd.privtap.model.requestField.RequestField;
-import hr.fer.dsd.privtap.model.requestField.RequestFieldName;
+import hr.fer.dsd.privtap.model.requestField.RequestFieldType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -24,9 +24,9 @@ public class UserInfo extends RequestField implements Serializable {
             this.email = email;
         }
     }
-    public UserInfo buildDefault(RequestFieldName name){
-        this.setName(name);
-        this.setValue(null);
+    public UserInfo buildDefault(RequestFieldType type, String maskedValue) {
+        this.setType(type);
+        this.setMaskedValue(maskedValue);
         return this;
     }
 }
