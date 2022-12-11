@@ -28,14 +28,19 @@ public class PlatformController {
         return platformService.getByName(name);
     }
 
-    @GetMapping("/allActions/{name}")
-    public List<ActionType> fetchAllActions(@PathVariable @NotNull String name) {
-        return platformService.getAllActions(name);
+    @GetMapping("/")
+    public List<String> getAllPlatformNames() {
+        return platformService.getAllPlatformNames();
     }
 
-    @GetMapping("/allTriggers/{name}")
-    public List<TriggerType> fetchAllTriggers(@PathVariable @NotNull String name) {
-        return platformService.getAllTriggers(name);
+    @GetMapping("/allActions/{platformName}")
+    public List<ActionType> fetchAllActions(@PathVariable @NotNull String platformName) {
+        return platformService.getAllActions(platformName);
+    }
+
+    @GetMapping("/allTriggers/{platformName}")
+    public List<TriggerType> fetchAllTriggers(@PathVariable @NotNull String platformName) {
+        return platformService.getAllTriggers(platformName);
     }
 
     @GetMapping("/{platformName}/getCode")
@@ -60,7 +65,7 @@ public class PlatformController {
         return platformService.registerTriggerType(platformName, triggerType);
     }
 
-    @GetMapping("/{platformName}/oauthScopes")
+    @GetMapping("/oauthScopes/{platformName}")
     public Set<String> getOAuthScopes(@PathVariable @NotNull String platformName) {
         return platformService.getOAuthScopes(platformName);
     }

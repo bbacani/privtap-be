@@ -10,6 +10,7 @@ import hr.fer.dsd.privtap.model.auth0.OAuthTokensResponse;
 import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
+import hr.fer.dsd.privtap.utils.mappers.ActionMapper;
 import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +33,10 @@ public class PlatformService {
 
     public Platform getByName(String name) {
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
+    }
+
+    public List<String> getAllPlatformNames() {
+        return platformRepository.findAll().stream().map(platformEntity -> platformEntity.getName()).toList();
     }
 
     public void save(PlatformEntity platformEntity){
