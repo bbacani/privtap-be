@@ -41,7 +41,7 @@ public class UserController {
 
     @GetMapping("/user/{userId}")
     public User getById(@PathVariable @NotNull String userId) {
-        return service.findById(userId);
+        return service.getById(userId);
     }
 
     @PatchMapping("/")
@@ -51,7 +51,7 @@ public class UserController {
 
     @GetMapping("/all")
     public List<User> fetchAllUsers() {
-        return service.findAll();
+        return service.getAllUsers();
     }
 
     @PostMapping("/automation/{userId}")

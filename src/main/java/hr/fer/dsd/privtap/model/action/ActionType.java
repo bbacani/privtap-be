@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,9 @@ import java.util.Set;
 public class ActionType {
     @Id
     private String id;
+    @NotNull
     private String name;
+    @NotNull
     private String platformName;
     private String description;
     private List<RequestField> requestFields;
