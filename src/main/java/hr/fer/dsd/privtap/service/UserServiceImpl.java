@@ -45,11 +45,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserById(String id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", id)
         );
 
-        return UserPrincipal.create(user);
+        return UserPrincipal.create(userEntity);
     }
 
     public User update(User user) {
@@ -58,12 +58,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(updatedEntity);
         return UserMapper.INSTANCE.fromEntity(updatedEntity);
-    }
-
-    public void create(User user) {
-        var entity = UserMapper.INSTANCE.toEntity(user);
-        entity.setAutomations(new HashSet<>());
-        userRepository.save(entity);
     }
 
     public User getById(String id) {

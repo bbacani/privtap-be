@@ -1,16 +1,13 @@
 package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.entities.PlatformEntity;
-import hr.fer.dsd.privtap.domain.repositories.OAuthCredentialsRepository;
 import hr.fer.dsd.privtap.domain.repositories.PlatformRepository;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.auth0.OAuthCredentials;
 import hr.fer.dsd.privtap.model.action.ActionType;
 import hr.fer.dsd.privtap.model.auth0.OAuthTokensResponse;
-import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
-import hr.fer.dsd.privtap.utils.mappers.ActionMapper;
 import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +36,26 @@ public class PlatformService {
         return platformRepository.findAll().stream().map(platformEntity -> platformEntity.getName()).toList();
     }
 
+    public List<String> getAllTriggerPlatforms() {
+        return platformRepository
+                .findAll()
+                .stream()
+                .filter(platformEntity -> !platformEntity.getTriggerTypes().isEmpty())
+                .map(platformEntity -> platformEntity.getName())
+                .toList();
+    }
+
+    public List<String> getAllActionPlatforms() {
+        return platformRepository
+                .findAll()
+                .stream()
+                .filter(platformEntity ->
+                        !platformEntity.getActionTypes().isEmpty()
+                )
+                .map(platformEntity -> platformEntity.getName())
+                .toList();
+    }
+
     public void save(PlatformEntity platformEntity){
         platformRepository.save(platformEntity);
     }
@@ -51,8 +68,8 @@ public class PlatformService {
     }
 
     public Platform create(Platform platform) {
-        platform.setActions(new ArrayList<ActionType>());
-        platform.setTriggers(new ArrayList<TriggerType>());
+        platform.setActionTypes(new ArrayList<ActionType>());
+        platform.setTriggerTypes(new ArrayList<TriggerType>());
         platform.setOauthScopes(new HashSet<String>());
 
         PlatformEntity entity = PlatformMapper.INSTANCE.toEntity(platform);
@@ -60,17 +77,17 @@ public class PlatformService {
         return PlatformMapper.INSTANCE.fromEntity(entity);
     }
 
-    public List<ActionType> getAllActions(String name) {
-        return getByName(name).getActions();
+    public List<ActionType> getActionTypesByPlatform(String platformName) {
+        return getByName(platformName).getActionTypes();
     }
 
-    public List<TriggerType> getAllTriggers(String name) {
-        return getByName(name).getTriggers();
+    public List<TriggerType> getTriggerTypesByPlatform(String platformName) {
+        return getByName(platformName).getTriggerTypes();
     }
 
     public ActionType getActionType(String platformName, String id) {
         return getByName(platformName)
-                .getActions()
+                .getActionTypes()
                 .stream()
                 .filter(actionType -> actionType.getId().equals(id))
                 .findAny()
@@ -79,7 +96,7 @@ public class PlatformService {
 
     public TriggerType getTriggerType(String platformName, String id) {
         return getByName(platformName)
-                .getTriggers()
+                .getTriggerTypes()
                 .stream()
                 .filter(triggerType -> triggerType.getId().equals(id))
                 .findAny()
@@ -93,7 +110,7 @@ public class PlatformService {
 
     }
 
-    public void getAuthToken(Platform platform, String code) {
+    public void getAuthToken(Platform platform, String code, String userId) {
         MultiValueMap<String, String> bodyValues = new LinkedMultiValueMap<>();
         bodyValues.add("grant_type", "authorization_code");
         bodyValues.add("code", code);
@@ -114,6 +131,7 @@ public class PlatformService {
                 .toEntity(OAuthTokensResponse.class)
                 .subscribe(response -> {
                     OAuthCredentials credentials = OAuthCredentials.builder()
+                            .userId(userId)
                             .platformName(platform.getName())
                             .accessToken(response.getBody().getAccess_token())
                             .refreshToken(response.getBody().getRefresh_token())
@@ -140,9 +158,9 @@ public class PlatformService {
         PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
         Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
 
-        List<TriggerType> triggerTypes = platform.getTriggers();
+        List<TriggerType> triggerTypes = platform.getTriggerTypes();
         triggerTypes.add(triggerType);
-        platform.setTriggers(triggerTypes);
+        platform.setTriggerTypes(triggerTypes);
 
         Set<String> oauthScopes = platform.getOauthScopes();
         oauthScopes.addAll(triggerType.getOauthScopes());
@@ -157,9 +175,9 @@ public class PlatformService {
         PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
         Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
 
-        List<ActionType> actionTypes = platform.getActions();
+        List<ActionType> actionTypes = platform.getActionTypes();
         actionTypes.add(actionType);
-        platform.setActions(actionTypes);
+        platform.setActionTypes(actionTypes);
 
         Set<String> oauthScopes = platform.getOauthScopes();
         oauthScopes.addAll(actionType.getOauthScopes());
@@ -179,7 +197,7 @@ public class PlatformService {
     ActionService actionService;
 
     public void callAction() {
-        Action action = actionService.createFromType(getAllActions("spotify").get(0), "1");
+        Action action = actionService.createFromType(getActionTypesByPlatform("spotify").get(0), "1");
         actionService.handler(action);
     }
 }

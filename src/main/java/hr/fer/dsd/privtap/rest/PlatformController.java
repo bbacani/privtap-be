@@ -33,20 +33,30 @@ public class PlatformController {
         return platformService.getAllPlatformNames();
     }
 
-    @GetMapping("/allActions/{platformName}")
-    public List<ActionType> fetchAllActions(@PathVariable @NotNull String platformName) {
-        return platformService.getAllActions(platformName);
+    @GetMapping("/triggerPlatforms")
+    public List<String> getAllTriggerPlatforms() {
+        return platformService.getAllTriggerPlatforms();
     }
 
-    @GetMapping("/allTriggers/{platformName}")
-    public List<TriggerType> fetchAllTriggers(@PathVariable @NotNull String platformName) {
-        return platformService.getAllTriggers(platformName);
+    @GetMapping("/actionPlatforms")
+    public List<String> getAllActionPlatforms() {
+        return platformService.getAllActionPlatforms();
     }
 
-    @GetMapping("/{platformName}/getCode")
-    public void getCode(@PathVariable @NotNull String platformName, @RequestParam("code") String userCode) {
+    @GetMapping("/{platformName}/allActionTypes")
+    public List<ActionType> getActionTypesByPlatform(@PathVariable @NotNull String platformName) {
+        return platformService.getActionTypesByPlatform(platformName);
+    }
+
+    @GetMapping("/{platformName}/allTriggerTypes")
+    public List<TriggerType> getTriggerTypesByPlatform(@PathVariable @NotNull String platformName) {
+        return platformService.getTriggerTypesByPlatform(platformName);
+    }
+
+    @GetMapping("/{platformName}/getCode/{userId}")
+    public void getCode(@PathVariable @NotNull String platformName, @PathVariable @NotNull String userId, @RequestParam("code") String userCode) {
         Platform platform = platformService.getByName(platformName);
-        platformService.getAuthToken(platform, userCode);
+        platformService.getAuthToken(platform, userCode, userId);
     }
 
     @GetMapping("/{platformName}/authorizationUrl")
@@ -65,7 +75,7 @@ public class PlatformController {
         return platformService.registerTriggerType(platformName, triggerType);
     }
 
-    @GetMapping("/oauthScopes/{platformName}")
+    @GetMapping("/{platformName}/oauthScopes")
     public Set<String> getOAuthScopes(@PathVariable @NotNull String platformName) {
         return platformService.getOAuthScopes(platformName);
     }
