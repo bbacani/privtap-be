@@ -7,9 +7,9 @@ import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.security.CurrentUser;
+import hr.fer.dsd.privtap.service.EndUserService;
 import lombok.AllArgsConstructor;
 import hr.fer.dsd.privtap.security.UserPrincipal;
-import hr.fer.dsd.privtap.service.UserServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +24,7 @@ public class UserController {
 
     private final UserRepository userRepository;
 
-    private final UserServiceImpl service;
+    private final EndUserService service;
 
     @GetMapping("/")
     public String home() {
@@ -41,11 +41,6 @@ public class UserController {
     @GetMapping("/user/{userId}")
     public User getById(@PathVariable @NotNull String userId) {
         return service.getById(userId);
-    }
-
-    @PatchMapping("/")
-    public User update(@RequestBody @NotNull User user) {
-        return service.update(user);
     }
 
     @GetMapping("/all")

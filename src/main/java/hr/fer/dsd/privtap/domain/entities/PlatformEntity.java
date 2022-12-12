@@ -14,14 +14,11 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-// TODO: 06.12.2022. revert this to "platforms"
-@Document(collection = "newPlatforms")
+@Document(collection = "platforms")
 public class PlatformEntity {
 
     @Id
     private String id;
-    private String username;
-    private String email;
     private String name;
     private String color;
     private String oauthUrl;

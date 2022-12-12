@@ -16,41 +16,36 @@ import java.util.Set;
 @RequestMapping("/platform")
 public class PlatformController {
 
-    private PlatformService platformService;
+    private final PlatformService platformService;
 
-    @PostMapping
-    public Platform registerPlatform(@RequestBody Platform platform) {
-        return platformService.create(platform);
+    @GetMapping("/{platformName}/oauthScopes")
+    public Set<String> getOAuthScopes(@PathVariable @NotNull String platformName) {
+        return platformService.getOAuthScopes(platformName);
     }
 
-    @GetMapping("/{name}")
-    public Platform getByName(@PathVariable @NotNull String name) {
-        return platformService.getByName(name);
+    @GetMapping("/{platformName}/allActionTypes")
+    public List<ActionType> fetchAllActions(@PathVariable @NotNull String platformName) {
+        return platformService.getAllActions(platformName);
+    }
+
+    @GetMapping("/{platformName}/allTriggerTypes")
+    public List<TriggerType> fetchAllTriggers(@PathVariable @NotNull String platformName) {
+        return platformService.getAllTriggers(platformName);
+    }
+
+    @GetMapping("/{platformName}/name")
+    public Platform getByName(@PathVariable @NotNull String platformName) {
+        return platformService.getByName(platformName);
     }
 
     @GetMapping("/")
-    public List<String> getAllPlatformNames() {
-        return platformService.getAllPlatformNames();
-    }
-
-    @GetMapping("/triggerPlatforms")
-    public List<String> getAllTriggerPlatforms() {
-        return platformService.getAllTriggerPlatforms();
+    public List<String> getPlatformNames(){
+        return platformService.getPlatformNames();
     }
 
     @GetMapping("/actionPlatforms")
     public List<String> getAllActionPlatforms() {
         return platformService.getAllActionPlatforms();
-    }
-
-    @GetMapping("/{platformName}/allActionTypes")
-    public List<ActionType> getActionTypesByPlatform(@PathVariable @NotNull String platformName) {
-        return platformService.getActionTypesByPlatform(platformName);
-    }
-
-    @GetMapping("/{platformName}/allTriggerTypes")
-    public List<TriggerType> getTriggerTypesByPlatform(@PathVariable @NotNull String platformName) {
-        return platformService.getTriggerTypesByPlatform(platformName);
     }
 
     @GetMapping("/{platformName}/getCode/{userId}")
@@ -65,24 +60,4 @@ public class PlatformController {
         return platformService.getAuthorizationURL(platform);
     }
 
-    @PostMapping("/{platformName}/actionType")
-    public Platform registerActionType(@PathVariable @NotNull String platformName, @RequestBody ActionType actionType) {
-        return platformService.registerActionType(platformName, actionType);
-    }
-
-    @PostMapping("/{platformName}/triggerType")
-    public Platform registerTriggerType(@PathVariable @NotNull String platformName, @RequestBody TriggerType triggerType) {
-        return platformService.registerTriggerType(platformName, triggerType);
-    }
-
-    @GetMapping("/{platformName}/oauthScopes")
-    public Set<String> getOAuthScopes(@PathVariable @NotNull String platformName) {
-        return platformService.getOAuthScopes(platformName);
-    }
-
-    // TODO: 08.12.2022. remove this, this is for testing from postman
-    @GetMapping("/{platformName}/testAction")
-    public void callAction(@PathVariable @NotNull String platformName) {
-        platformService.callAction();
-    }
 }

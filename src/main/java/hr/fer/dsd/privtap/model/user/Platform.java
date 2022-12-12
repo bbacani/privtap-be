@@ -4,19 +4,19 @@ import hr.fer.dsd.privtap.model.action.ActionType;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
 
 import java.util.List;
 import java.util.Set;
 
 @Data
-@SuperBuilder (toBuilder = true)
-@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Platform extends GenericUser {
+public class Platform {
+
+    @Id
+    private String id;
     private String name;
     private String color;
     private String oauthUrl;

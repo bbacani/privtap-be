@@ -1,17 +1,21 @@
-package hr.fer.dsd.privtap.model.user;
+package hr.fer.dsd.privtap.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import hr.fer.dsd.privtap.model.user.AuthProvider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 
 @Data
-@SuperBuilder (toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class GenericUser {
+@Document(collection = "serviceProviders")
+public class ServiceProviderEntity {
 
+    @Id
     private String id;
     private String username;
     private String email;
@@ -21,5 +25,5 @@ public class GenericUser {
     private String password = null;
     private AuthProvider provider;
     private String providerId;
-
+    private String platformId;
 }

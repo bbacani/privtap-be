@@ -32,15 +32,18 @@ public class PlatformService {
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
     }
 
-    public List<String> getAllPlatformNames() {
-        return platformRepository.findAll().stream().map(platformEntity -> platformEntity.getName()).toList();
+    public List<ActionType> getAllActions(String name) {
+        return getByName(name).getActions();
+    }
+    public List<TriggerType> getAllTriggers(String name) {
+        return getByName(name).getTriggers();
     }
 
     public List<String> getAllTriggerPlatforms() {
         return platformRepository
                 .findAll()
                 .stream()
-                .filter(platformEntity -> !platformEntity.getTriggerTypes().isEmpty())
+                .filter(platformEntity -> !platformEntity.getTriggers().isEmpty())
                 .map(platformEntity -> platformEntity.getName())
                 .toList();
     }
@@ -50,41 +53,12 @@ public class PlatformService {
                 .findAll()
                 .stream()
                 .filter(platformEntity ->
-                        !platformEntity.getActionTypes().isEmpty()
+                        !platformEntity.getActions().isEmpty()
                 )
                 .map(platformEntity -> platformEntity.getName())
                 .toList();
     }
-
-    public void save(PlatformEntity platformEntity){
-        platformRepository.save(platformEntity);
-    }
-
-    public Platform update(Platform platform) {
-        PlatformEntity entity = platformRepository.findByName(platform.getName()).orElseThrow(NoSuchElementException::new);
-        PlatformEntity updatedEntity = PlatformMapper.INSTANCE.updateEntity(entity, platform);
-        platformRepository.save(updatedEntity);
-        return PlatformMapper.INSTANCE.fromEntity(updatedEntity);
-    }
-
-    public Platform create(Platform platform) {
-        platform.setActionTypes(new ArrayList<ActionType>());
-        platform.setTriggerTypes(new ArrayList<TriggerType>());
-        platform.setOauthScopes(new HashSet<String>());
-
-        PlatformEntity entity = PlatformMapper.INSTANCE.toEntity(platform);
-        save(entity);
-        return PlatformMapper.INSTANCE.fromEntity(entity);
-    }
-
-    public List<ActionType> getActionTypesByPlatform(String platformName) {
-        return getByName(platformName).getActionTypes();
-    }
-
-    public List<TriggerType> getTriggerTypesByPlatform(String platformName) {
-        return getByName(platformName).getTriggerTypes();
-    }
-
+  
     public ActionType getActionType(String platformName, String id) {
         return getByName(platformName)
                 .getActionTypes()
@@ -152,45 +126,15 @@ public class PlatformService {
         return "http://localhost:8080/platform/" + platformName + "/getCode";
     }
 
-    public Platform registerTriggerType(String platformName, TriggerType triggerType) {
-        triggerType.setCreatedAt(Instant.now());
-        triggerType.setUpdatedAt(Instant.now());
-        PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
-        Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
-
-        List<TriggerType> triggerTypes = platform.getTriggerTypes();
-        triggerTypes.add(triggerType);
-        platform.setTriggerTypes(triggerTypes);
-
-        Set<String> oauthScopes = platform.getOauthScopes();
-        oauthScopes.addAll(triggerType.getOauthScopes());
-        platform.setOauthScopes(oauthScopes);
-
-        return update(platform);
-    }
-
-    public Platform registerActionType(String platformName, ActionType actionType) {
-        actionType.setCreatedAt(Instant.now());
-        actionType.setUpdatedAt(Instant.now());
-        PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
-        Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
-
-        List<ActionType> actionTypes = platform.getActionTypes();
-        actionTypes.add(actionType);
-        platform.setActionTypes(actionTypes);
-
-        Set<String> oauthScopes = platform.getOauthScopes();
-        oauthScopes.addAll(actionType.getOauthScopes());
-        platform.setOauthScopes(oauthScopes);
-
-        return update(platform);
-    }
-
     public Set<String> getOAuthScopes(String platformName) {
         PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
         Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
 
         return platform.getOauthScopes();
+    }
+
+    public List<String> getPlatformNames(){
+        return platformRepository.findAll().stream().map(platform -> platform.getName()).toList();
     }
 
     // TODO: 08.12.2022. remove this, this is just mock for action
