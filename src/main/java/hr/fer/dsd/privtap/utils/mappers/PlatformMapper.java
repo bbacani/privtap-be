@@ -10,13 +10,11 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface PlatformMapper {
-
     PlatformMapper INSTANCE = Mappers.getMapper(PlatformMapper.class);
 
     Platform fromEntity(PlatformEntity platform);
 
     PlatformEntity toEntity(Platform model);
 
-    PlatformEntity updateEntity(@MappingTarget PlatformEntity entity, Platform platform);
-
+    PlatformEntity updateEntity(@MappingTarget PlatformEntity entity, Platform serviceProvider);
 }
