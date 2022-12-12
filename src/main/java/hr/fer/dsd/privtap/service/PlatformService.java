@@ -2,6 +2,7 @@ package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.entities.PlatformEntity;
 import hr.fer.dsd.privtap.domain.repositories.PlatformRepository;
+import hr.fer.dsd.privtap.model.OAuthScope;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.auth0.OAuthCredentials;
 import hr.fer.dsd.privtap.model.action.ActionType;
@@ -77,10 +78,12 @@ public class PlatformService {
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    public String getAuthorizationURL(Platform platform) {
+    public String getAuthorizationURL(Platform platform, List<String> scopes) {
+        // TODO: 12.12.2022. implement this later with OAuthScope model
+//        List<String> scopeNames = scopes.stream().map(oAuthScope -> oAuthScope.getName()).toList();
         return platform.getOauthUrl() + "?client_id=" + platform.getClientId()
                 + "&response_type=code&redirect_uri=" + getRedirectUrl(platform.getName())
-                + (platform.getOauthScopes().isEmpty() ? "" : "&scope=" + String.join(",", platform.getOauthScopes()));
+                + (platform.getOauthScopes().isEmpty() ? "" : "&scope=" + String.join(",", scopes));
 
     }
 
@@ -123,7 +126,9 @@ public class PlatformService {
     }
 
     private String getRedirectUrl(String platformName) {
-        return "http://localhost:8080/platform/" + platformName + "/getCode";
+        return "http://localhost:3000/" + platformName + "/successfulLogin";
+//        return "http://localhost:3000/platform/" + platformName + "/authToken";
+//        return "http://localhost:8080/platform/" + platformName + "/authToken";
     }
 
     public Set<String> getOAuthScopes(String platformName) {

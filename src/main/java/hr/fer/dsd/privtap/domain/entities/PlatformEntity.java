@@ -14,7 +14,8 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "platforms")
+// TODO: 12.12.2022. revert this to "platforms"
+@Document(collection = "newPlatforms")
 public class PlatformEntity {
 
     @Id

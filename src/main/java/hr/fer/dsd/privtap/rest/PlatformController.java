@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.rest;
 
+import hr.fer.dsd.privtap.model.OAuthScope;
 import hr.fer.dsd.privtap.model.action.ActionType;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
@@ -55,9 +56,8 @@ public class PlatformController {
     }
 
     @GetMapping("/{platformName}/authorizationUrl")
-    public String getPlatformLogin(@PathVariable @NotNull String platformName) {
+    public String getPlatformLogin(@PathVariable @NotNull String platformName, @RequestParam @NotNull List<String> scopes) {
         Platform platform = platformService.getByName(platformName);
-        return platformService.getAuthorizationURL(platform);
+        return platformService.getAuthorizationURL(platform, scopes);
     }
-
 }
