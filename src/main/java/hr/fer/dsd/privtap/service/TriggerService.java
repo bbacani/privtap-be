@@ -24,7 +24,6 @@ public class TriggerService {
         var entity = TriggerMapper.INSTANCE.toEntity(trigger);
         entity.setCreatedAt(Instant.now());
         entity.setUpdatedAt(Instant.now());
-
         var savedEntity = triggerRepository.save(entity);
         return TriggerMapper.INSTANCE.fromEntity(savedEntity);
     }

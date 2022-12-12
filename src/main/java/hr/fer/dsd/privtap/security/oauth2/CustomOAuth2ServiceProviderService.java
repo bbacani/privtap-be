@@ -1,16 +1,13 @@
 package hr.fer.dsd.privtap.security.oauth2;
 
 import hr.fer.dsd.privtap.domain.entities.ServiceProviderEntity;
-import hr.fer.dsd.privtap.domain.entities.UserEntity;
 import hr.fer.dsd.privtap.domain.repositories.ServiceProviderRepository;
-import hr.fer.dsd.privtap.domain.repositories.UserRepository;
 import hr.fer.dsd.privtap.exception.OAuth2AuthenticationProcessingException;
 import hr.fer.dsd.privtap.model.user.AuthProvider;
-import hr.fer.dsd.privtap.model.user.ServiceProvider;
 import hr.fer.dsd.privtap.security.UserPrincipal;
 import hr.fer.dsd.privtap.security.oauth2.user.OAuth2UserInfo;
 import hr.fer.dsd.privtap.security.oauth2.user.OAuth2UserInfoFactory;
-import hr.fer.dsd.privtap.utils.mappers.UserMapper;
+import hr.fer.dsd.privtap.utils.mappers.ServiceProviderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
@@ -25,16 +22,16 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+public class CustomOAuth2ServiceProviderService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
+    private final ServiceProviderRepository serviceProviderRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
 
         try {
-            return processOAuth2User(oAuth2UserRequest, oAuth2User);
+            return processOAuth2ServiceProvider(oAuth2UserRequest, oAuth2User);
         } catch (AuthenticationException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -43,44 +40,44 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
-    private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
+    private OAuth2User processOAuth2ServiceProvider(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(oAuth2UserRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
         if(StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
 
-        Optional<UserEntity> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
-        UserEntity user;
-        if(userOptional.isPresent()) {
-            user = userOptional.get();
-            if(!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
+        Optional<ServiceProviderEntity> serviceProviderOptional = serviceProviderRepository.findByEmail(oAuth2UserInfo.getEmail());
+        ServiceProviderEntity serviceProvider;
+        if(serviceProviderOptional.isPresent()) {
+            serviceProvider = serviceProviderOptional.get();
+            if(!serviceProvider.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
                 throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
-                        user.getProvider() + " account. Please use your " + user.getProvider() +
+                        serviceProvider.getProvider() + " account. Please use your " + serviceProvider.getProvider() +
                         " account to login.");
             }
-            user = updateExistingUser(user, oAuth2UserInfo);
+            serviceProvider = updateExistingServiceProvider(serviceProvider, oAuth2UserInfo);
         } else {
-            user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
+            serviceProvider = registerNewServiceProvider(oAuth2UserRequest, oAuth2UserInfo);
         }
-        return UserPrincipal.create(UserMapper.INSTANCE.fromEntity(user), oAuth2User.getAttributes());
+        return UserPrincipal.create(ServiceProviderMapper.INSTANCE.fromEntity(serviceProvider), oAuth2User.getAttributes());
     }
 
+    private ServiceProviderEntity registerNewServiceProvider(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo){
+        ServiceProviderEntity serviceProvider = new ServiceProviderEntity();
+        serviceProvider.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
+        serviceProvider.setProviderId(oAuth2UserInfo.getId());
+        serviceProvider.setUsername(oAuth2UserInfo.getName());
+        serviceProvider.setEmail(oAuth2UserInfo.getEmail());
+        serviceProvider.setImageUrl(oAuth2UserInfo.getImageUrl());
 
-    private UserEntity registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-        UserEntity user = new UserEntity();
-
-        user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
-        user.setProviderId(oAuth2UserInfo.getId());
-        user.setUsername(oAuth2UserInfo.getName());
-        user.setEmail(oAuth2UserInfo.getEmail());
-        user.setImageUrl(oAuth2UserInfo.getImageUrl());
-        return userRepository.save(user);
+        return serviceProviderRepository.save(serviceProvider);
     }
 
-    private UserEntity updateExistingUser(UserEntity existingUser, OAuth2UserInfo oAuth2UserInfo) {
-        existingUser.setUsername(oAuth2UserInfo.getName());
-        existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
-        return userRepository.save(existingUser);
+    private ServiceProviderEntity updateExistingServiceProvider(ServiceProviderEntity existingSP, OAuth2UserInfo oAuth2UserInfo) {
+        existingSP.setUsername(oAuth2UserInfo.getName());
+        existingSP.setImageUrl(oAuth2UserInfo.getImageUrl());
+        return serviceProviderRepository.save(existingSP);
     }
 
 }
+

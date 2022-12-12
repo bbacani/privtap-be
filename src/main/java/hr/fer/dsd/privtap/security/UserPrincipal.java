@@ -1,6 +1,7 @@
 package hr.fer.dsd.privtap.security;
 
-import hr.fer.dsd.privtap.domain.entities.UserEntity;
+import hr.fer.dsd.privtap.model.user.GenericUser;
+import hr.fer.dsd.privtap.model.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,9 +26,17 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserPrincipal create(UserEntity user) {
+    public static UserPrincipal create(GenericUser user) {
+
+        String role;
+        if(user instanceof User){
+            role = "ROLE_USER";
+        }
+        else {
+            role = "ROLE_SERVICEPROVIDER";
+        }
         List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                singletonList(new SimpleGrantedAuthority(role));
 
         return new UserPrincipal(
                 user.getId(),
@@ -37,7 +46,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         );
     }
 
-    public static UserPrincipal create(UserEntity user, Map<String, Object> attributes) {
+    public static UserPrincipal create(GenericUser user, Map<String, Object> attributes) {
         UserPrincipal userPrincipal = UserPrincipal.create(user);
         userPrincipal.setAttributes(attributes);
         return userPrincipal;

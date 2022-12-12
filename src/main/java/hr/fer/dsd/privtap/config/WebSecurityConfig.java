@@ -2,13 +2,11 @@ package hr.fer.dsd.privtap.config;
 
 import hr.fer.dsd.privtap.security.RestAuthenticationEntryPoint;
 import hr.fer.dsd.privtap.security.TokenAuthenticationFilter;
-import hr.fer.dsd.privtap.security.oauth2.CustomOAuth2UserService;
-import hr.fer.dsd.privtap.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import hr.fer.dsd.privtap.security.oauth2.OAuth2AuthenticationFailureHandler;
-import hr.fer.dsd.privtap.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import hr.fer.dsd.privtap.security.oauth2.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2ServiceProviderService customOAuth2ServiceProviderService;
 
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
@@ -48,7 +47,8 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain filterChainUser(HttpSecurity http) throws Exception {
 
         http
                 .cors()
@@ -67,17 +67,17 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
-                .antMatchers("/auth/**", "/oauth2/**").permitAll()
+                .antMatchers("/user/auth/**", "/user/oauth2/**").permitAll()
                 .mvcMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
                 .authorizationEndpoint()
-                .baseUri("/oauth2/authorize")
+                .baseUri("/user/oauth2/authorize")
                 .authorizationRequestRepository(cookieAuthorizationRequestRepository())
                 .and()
                 .redirectionEndpoint()
-                .baseUri("/oauth2/callback/*")
+                .baseUri("/user/oauth2/callback/*")
                 .and()
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService)
@@ -91,4 +91,45 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+        @Bean
+        @Order(2)
+        public SecurityFilterChain filterChainServiceProvider(HttpSecurity http) throws Exception {
+            http
+                    .cors()
+                    .and()
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                    .csrf()
+                    .disable()
+                    .formLogin()
+                    .disable()
+                    .httpBasic()
+                    .disable()
+                    .exceptionHandling()
+                    .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                    .and()
+                    .authorizeRequests()
+                    .antMatchers("/**").permitAll()
+                    .antMatchers("/serviceprovider/auth/**", "/serviceprovider/oauth2/**").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .oauth2Login()
+                    .authorizationEndpoint()
+                    .baseUri("/serviceprovider/oauth2/authorize")
+                    .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                    .and()
+                    .redirectionEndpoint()
+                    .baseUri("/serviceprovider/oauth2/callback/*")
+                    .and()
+                    .userInfoEndpoint()
+                    .userService(customOAuth2ServiceProviderService)
+                    .and()
+                    .successHandler(oAuth2AuthenticationSuccessHandler)
+                    .failureHandler(oAuth2AuthenticationFailureHandler);
+
+            http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+            return http.build();
+        }
 }
