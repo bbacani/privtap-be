@@ -25,7 +25,7 @@ public class PlatformEntity {
     private String oauthTokenUrl;
     private String clientId;
     private String clientSecret;
-    private List<TriggerType> triggers;
-    private List<ActionType> actions;
+    private List<TriggerType> triggerTypes;
+    private List<ActionType> actionTypes;
     private Set<String> oauthScopes;
 }

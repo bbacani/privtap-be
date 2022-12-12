@@ -35,14 +35,33 @@ public class PlatformService {
     public List<ActionType> getAllActions(String name) {
         return getByName(name).getActions();
     }
-
     public List<TriggerType> getAllTriggers(String name) {
         return getByName(name).getTriggers();
     }
 
+    public List<String> getAllTriggerPlatforms() {
+        return platformRepository
+                .findAll()
+                .stream()
+                .filter(platformEntity -> !platformEntity.getTriggers().isEmpty())
+                .map(platformEntity -> platformEntity.getName())
+                .toList();
+    }
+
+    public List<String> getAllActionPlatforms() {
+        return platformRepository
+                .findAll()
+                .stream()
+                .filter(platformEntity ->
+                        !platformEntity.getActions().isEmpty()
+                )
+                .map(platformEntity -> platformEntity.getName())
+                .toList();
+    }
+  
     public ActionType getActionType(String platformName, String id) {
         return getByName(platformName)
-                .getActions()
+                .getActionTypes()
                 .stream()
                 .filter(actionType -> actionType.getId().equals(id))
                 .findAny()
@@ -51,7 +70,7 @@ public class PlatformService {
 
     public TriggerType getTriggerType(String platformName, String id) {
         return getByName(platformName)
-                .getTriggers()
+                .getTriggerTypes()
                 .stream()
                 .filter(triggerType -> triggerType.getId().equals(id))
                 .findAny()
@@ -65,7 +84,7 @@ public class PlatformService {
 
     }
 
-    public void getAuthToken(Platform platform, String code) {
+    public void getAuthToken(Platform platform, String code, String userId) {
         MultiValueMap<String, String> bodyValues = new LinkedMultiValueMap<>();
         bodyValues.add("grant_type", "authorization_code");
         bodyValues.add("code", code);
@@ -86,6 +105,7 @@ public class PlatformService {
                 .toEntity(OAuthTokensResponse.class)
                 .subscribe(response -> {
                     OAuthCredentials credentials = OAuthCredentials.builder()
+                            .userId(userId)
                             .platformName(platform.getName())
                             .accessToken(response.getBody().getAccess_token())
                             .refreshToken(response.getBody().getRefresh_token())
@@ -121,7 +141,7 @@ public class PlatformService {
     ActionService actionService;
 
     public void callAction() {
-        Action action = actionService.createFromType(getAllActions("spotify").get(0), "1");
+        Action action = actionService.createFromType(getActionTypesByPlatform("spotify").get(0), "1");
         actionService.handler(action);
     }
 }

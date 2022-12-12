@@ -38,15 +38,20 @@ public class PlatformController {
         return platformService.getByName(platformName);
     }
 
-    @GetMapping()
+    @GetMapping("/")
     public List<String> getPlatformNames(){
         return platformService.getPlatformNames();
     }
 
-    @GetMapping("/{platformName}/getCode")
-    public void getCode(@PathVariable @NotNull String platformName, @RequestParam("code") String userCode) {
+    @GetMapping("/actionPlatforms")
+    public List<String> getAllActionPlatforms() {
+        return platformService.getAllActionPlatforms();
+    }
+
+    @GetMapping("/{platformName}/getCode/{userId}")
+    public void getCode(@PathVariable @NotNull String platformName, @PathVariable @NotNull String userId, @RequestParam("code") String userCode) {
         Platform platform = platformService.getByName(platformName);
-        platformService.getAuthToken(platform, userCode);
+        platformService.getAuthToken(platform, userCode, userId);
     }
 
     @GetMapping("/{platformName}/authorizationUrl")

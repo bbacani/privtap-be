@@ -31,11 +31,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserById(String id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", id)
         );
 
-        return UserPrincipal.create(user);
+        return UserPrincipal.create(userEntity);
     }
-
 }
