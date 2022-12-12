@@ -45,8 +45,8 @@ public class ServiceProviderService {
 
 
     public Platform registerPlatform(String providerId, Platform platform) {
-        platform.setActions(new ArrayList<ActionType>());
-        platform.setTriggers(new ArrayList<TriggerType>());
+        platform.setActionTypes(new ArrayList<ActionType>());
+        platform.setTriggerTypes(new ArrayList<TriggerType>());
         platform.setOauthScopes(new HashSet<String>());
 
         PlatformEntity entity = PlatformMapper.INSTANCE.toEntity(platform);
@@ -63,9 +63,9 @@ public class ServiceProviderService {
         triggerType.setUpdatedAt(Instant.now());
         Platform platform = getPlatform(providerId);
 
-        List<TriggerType> triggerTypes = platform.getTriggers();
+        List<TriggerType> triggerTypes = platform.getTriggerTypes();
         triggerTypes.add(triggerType);
-        platform.setTriggers(triggerTypes);
+        platform.setTriggerTypes(triggerTypes);
 
         Set<String> oauthScopes = platform.getOauthScopes();
         oauthScopes.addAll(triggerType.getOauthScopes());
@@ -79,9 +79,9 @@ public class ServiceProviderService {
         actionType.setUpdatedAt(Instant.now());
         Platform platform = getPlatform(providerId);
 
-        List<ActionType> actionTypes = platform.getActions();
+        List<ActionType> actionTypes = platform.getActionTypes();
         actionTypes.add(actionType);
-        platform.setActions(actionTypes);
+        platform.setActionTypes(actionTypes);
 
         Set<String> oauthScopes = platform.getOauthScopes();
         oauthScopes.addAll(actionType.getOauthScopes());

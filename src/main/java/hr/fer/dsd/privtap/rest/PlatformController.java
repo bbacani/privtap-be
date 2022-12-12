@@ -25,12 +25,12 @@ public class PlatformController {
 
     @GetMapping("/{platformName}/allActionTypes")
     public List<ActionType> fetchAllActions(@PathVariable @NotNull String platformName) {
-        return platformService.getAllActions(platformName);
+        return platformService.getActionTypesByPlatform(platformName);
     }
 
     @GetMapping("/{platformName}/allTriggerTypes")
-    public List<TriggerType> fetchAllTriggers(@PathVariable @NotNull String platformName) {
-        return platformService.getAllTriggers(platformName);
+    public List<TriggerType> getTriggerTypesByPlatform(@PathVariable @NotNull String platformName) {
+        return platformService.getTriggerTypesByPlatform(platformName);
     }
 
     @GetMapping("/{platformName}/name")

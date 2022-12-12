@@ -32,18 +32,18 @@ public class PlatformService {
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
     }
 
-    public List<ActionType> getAllActions(String name) {
-        return getByName(name).getActions();
+    public List<ActionType> getActionTypesByPlatform(String name) {
+        return getByName(name).getActionTypes();
     }
-    public List<TriggerType> getAllTriggers(String name) {
-        return getByName(name).getTriggers();
+    public List<TriggerType> getTriggerTypesByPlatform(String name) {
+        return getByName(name).getTriggerTypes();
     }
 
     public List<String> getAllTriggerPlatforms() {
         return platformRepository
                 .findAll()
                 .stream()
-                .filter(platformEntity -> !platformEntity.getTriggers().isEmpty())
+                .filter(platformEntity -> !platformEntity.getTriggerTypes().isEmpty())
                 .map(platformEntity -> platformEntity.getName())
                 .toList();
     }
@@ -53,7 +53,7 @@ public class PlatformService {
                 .findAll()
                 .stream()
                 .filter(platformEntity ->
-                        !platformEntity.getActions().isEmpty()
+                        !platformEntity.getActionTypes().isEmpty()
                 )
                 .map(platformEntity -> platformEntity.getName())
                 .toList();
