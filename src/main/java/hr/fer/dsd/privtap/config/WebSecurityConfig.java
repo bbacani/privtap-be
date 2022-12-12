@@ -94,6 +94,7 @@ public class WebSecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain filterChainServiceProvider(HttpSecurity http) throws Exception {
+
         http
                 .cors()
                 .and()
