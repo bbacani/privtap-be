@@ -48,8 +48,8 @@ public class PlatformController {
         return platformService.getAllActionPlatforms();
     }
 
-    @GetMapping("/{platformName}/getCode/{userId}")
-    public void getCode(@PathVariable @NotNull String platformName, @PathVariable @NotNull String userId, @RequestParam("code") String userCode) {
+    @GetMapping("/{platformName}/oauthToken/{userId}")
+    public void getOAuthToken(@PathVariable @NotNull String platformName, @PathVariable @NotNull String userId, @RequestParam("code") String userCode) {
         Platform platform = platformService.getByName(platformName);
         platformService.getAuthToken(platform, userCode, userId);
     }
