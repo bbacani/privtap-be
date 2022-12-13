@@ -1,6 +1,5 @@
 package hr.fer.dsd.privtap.rest;
 
-import hr.fer.dsd.privtap.model.OAuthScope;
 import hr.fer.dsd.privtap.model.action.ActionType;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
@@ -40,13 +39,18 @@ public class PlatformController {
     }
 
     @GetMapping("/")
-    public List<String> getPlatformNames(){
+    public List<String> getPlatformNames() {
         return platformService.getPlatformNames();
     }
 
     @GetMapping("/actionPlatforms")
     public List<String> getAllActionPlatforms() {
         return platformService.getAllActionPlatforms();
+    }
+
+    @GetMapping("/triggerPlatforms")
+    public List<String> getAllTriggerPlatforms() {
+        return platformService.getAllTriggerPlatforms();
     }
 
     @GetMapping("/{platformName}/oauthToken/{userId}")
