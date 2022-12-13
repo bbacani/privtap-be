@@ -34,8 +34,8 @@ public class EndUserService {
     }
 
     public User registerAutomation(String userId, AutomationRequest request) {
-        ActionType actionType = platformService.getActionType(request.getActionTypePlatformName(), userId);
-        TriggerType triggerType = platformService.getTriggerType(request.getTriggerTypePlatformName(), userId);
+        ActionType actionType = platformService.getActionType(request.getActionTypePlatformName(), request.getActionTypeId());
+        TriggerType triggerType = platformService.getTriggerType(request.getTriggerTypePlatformName(), request.getTriggerTypeId());
         Action action = new Action();
         Trigger trigger = new Trigger();
         User user = getById(userId);
