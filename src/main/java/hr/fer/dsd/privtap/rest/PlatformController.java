@@ -43,11 +43,6 @@ public class PlatformController {
         return platformService.getPlatformNames();
     }
 
-    @GetMapping("/triggerPlatforms")
-    public List<String> getAllTriggerPlatforms() {
-        return platformService.getAllTriggerPlatforms();
-    }
-
     @GetMapping("/actionPlatforms")
     public List<String> getAllActionPlatforms() {
         return platformService.getAllActionPlatforms();
