@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.domain.entities;
 
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +25,7 @@ public class TriggerEntity {
     private String typeId;
     private String description;
     private List<RequestField> fields;
-    private List<String> oauthScopes;
+    private Set<OAuthScope> oauthScopes;
     private Instant createdAt;
     private Instant updatedAt;
 }
