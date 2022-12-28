@@ -2,10 +2,10 @@ package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.entities.PlatformEntity;
 import hr.fer.dsd.privtap.domain.repositories.PlatformRepository;
-import hr.fer.dsd.privtap.model.OAuthScope;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.auth0.OAuthCredentials;
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.auth0.OAuthTokensResponse;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
@@ -22,6 +22,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.net.URI;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -78,13 +79,10 @@ public class PlatformService {
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    public String getAuthorizationURL(Platform platform, List<String> scopes) {
-        // TODO: 12.12.2022. implement this later with OAuthScope model
-//        List<String> scopeNames = scopes.stream().map(oAuthScope -> oAuthScope.getName()).toList();
+    public String getAuthorizationURL(Platform platform, List<OAuthScope> oAuthScopes) {
         return platform.getOauthUrl() + "?client_id=" + platform.getClientId()
                 + "&response_type=code&redirect_uri=" + getRedirectUrl(platform.getName())
-                + (platform.getOauthScopes().isEmpty() ? "" : "&scope=" + String.join(",", scopes));
-
+                + (platform.getOauthScopes().isEmpty() ? "" : "&scope=" + String.join(",", oAuthScopes.stream().map(oAuthScope -> oAuthScope.getName()).toList()));
     }
 
     public void getAuthToken(Platform platform, String code, String userId) {
@@ -107,6 +105,7 @@ public class PlatformService {
                     .block()
                 .toEntity(OAuthTokensResponse.class)
                 .subscribe(response -> {
+
                     OAuthCredentials credentials = OAuthCredentials.builder()
                             .userId(userId)
                             .platformName(platform.getName())
@@ -114,7 +113,7 @@ public class PlatformService {
                             .refreshToken(response.getBody().getRefresh_token())
                             .tokenType(response.getBody().getToken_type())
                             .expiresIn(response.getBody().getExpires_in())
-                            .scope(response.getBody().getScope())
+                            .oauthScopes(getScopesFromScopeNames(platform, response.getBody().getScope()))
                             .createdAt(Instant.now())
                             .updatedAt(Instant.now())
                             .build();
@@ -125,17 +124,27 @@ public class PlatformService {
         }
     }
 
+    private Set<OAuthScope> getScopesFromScopeNames(Platform platform, String oAuthScopeNamesRaw) {
+        List<String> oAuthScopeNames = Arrays.stream(oAuthScopeNamesRaw.split(",")).toList();
+        return platform.getOauthScopes().stream().filter(oAuthScope -> oAuthScopeNames.contains(oAuthScope.getName())).collect(Collectors.toSet());
+    }
+
     private String getRedirectUrl(String platformName) {
         return "http://localhost:3000/" + platformName + "/successfulLogin";
 //        return "http://localhost:3000/platform/" + platformName + "/authToken";
 //        return "http://localhost:8080/platform/" + platformName + "/authToken";
     }
 
-    public Set<String> getOAuthScopes(String platformName) {
+    public Set<OAuthScope> getOAuthScopes(String platformName) {
         PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
         Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
 
         return platform.getOauthScopes();
+    }
+
+    public Set<OAuthScope> getOAuthScopes(String platformName, String userId) {
+        OAuthCredentials credentials = oAuthCredentialsService.get(userId, platformName);
+        return credentials.getOauthScopes();
     }
 
     public List<String> getPlatformNames(){

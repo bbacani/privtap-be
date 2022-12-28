@@ -1,6 +1,7 @@
 package hr.fer.dsd.privtap.domain.entities;
 
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +15,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-// TODO: 12.12.2022. revert this to "platforms"
-@Document(collection = "newPlatforms")
+@Document(collection = "platforms")
 public class PlatformEntity {
 
     @Id
@@ -28,5 +28,5 @@ public class PlatformEntity {
     private String clientSecret;
     private List<TriggerType> triggerTypes;
     private List<ActionType> actionTypes;
-    private Set<String> oauthScopes;
+    private Set<OAuthScope> oauthScopes;
 }

@@ -1,6 +1,7 @@
 package hr.fer.dsd.privtap.model.user;
 
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,5 +26,5 @@ public class Platform {
     private String clientSecret;
     private List<TriggerType> triggerTypes;
     private List<ActionType> actionTypes;
-    private Set<String> oauthScopes;
+    private Set<OAuthScope> oauthScopes;
 }

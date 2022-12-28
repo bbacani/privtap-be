@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.model.action;
 
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +23,7 @@ public class ActionType {
     private String platformName;
     private String description;
     private List<RequestField> requestFields;
-    private Set<String> oauthScopes;
+    private Set<OAuthScope> oauthScopes;
     private String url;
     private Instant createdAt;
     private Instant updatedAt;
