@@ -5,6 +5,7 @@ import hr.fer.dsd.privtap.domain.entities.ServiceProviderEntity;
 import hr.fer.dsd.privtap.domain.repositories.PlatformRepository;
 import hr.fer.dsd.privtap.domain.repositories.ServiceProviderRepository;
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
 import hr.fer.dsd.privtap.model.user.ServiceProvider;
@@ -47,7 +48,7 @@ public class ServiceProviderService {
     public Platform registerPlatform(String providerId, Platform platform) {
         platform.setActionTypes(new ArrayList<ActionType>());
         platform.setTriggerTypes(new ArrayList<TriggerType>());
-        platform.setOauthScopes(new HashSet<String>());
+        platform.setOauthScopes(new HashSet<OAuthScope>());
 
         PlatformEntity entity = PlatformMapper.INSTANCE.toEntity(platform);
         entity = platformRepository.save(entity);
@@ -67,7 +68,7 @@ public class ServiceProviderService {
         triggerTypes.add(triggerType);
         platform.setTriggerTypes(triggerTypes);
 
-        Set<String> oauthScopes = platform.getOauthScopes();
+        Set<OAuthScope> oauthScopes = platform.getOauthScopes();
         oauthScopes.addAll(triggerType.getOauthScopes());
         platform.setOauthScopes(oauthScopes);
 
@@ -83,7 +84,7 @@ public class ServiceProviderService {
         actionTypes.add(actionType);
         platform.setActionTypes(actionTypes);
 
-        Set<String> oauthScopes = platform.getOauthScopes();
+        Set<OAuthScope> oauthScopes = platform.getOauthScopes();
         oauthScopes.addAll(actionType.getOauthScopes());
         platform.setOauthScopes(oauthScopes);
 

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Data
 @Builder
@@ -18,7 +19,7 @@ public class OAuthCredentials {
     private String tokenType;
     private Integer expiresIn;
     private String refreshToken;
-    private String scope;
+    private Set<OAuthScope> oauthScopes;
     private Instant createdAt;
     private Instant updatedAt;
 }

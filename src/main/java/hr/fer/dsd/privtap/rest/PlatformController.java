@@ -1,6 +1,7 @@
 package hr.fer.dsd.privtap.rest;
 
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
 import hr.fer.dsd.privtap.service.PlatformService;
@@ -19,7 +20,12 @@ public class PlatformController {
     private final PlatformService platformService;
 
     @GetMapping("/{platformName}/oauthScopes")
-    public Set<String> getOAuthScopes(@PathVariable @NotNull String platformName) {
+    public Set<OAuthScope> getOAuthScopes(@PathVariable @NotNull String platformName, @PathVariable @NotNull String userId) {
+        return platformService.getOAuthScopes(platformName, userId);
+    }
+
+    @GetMapping("/{platformName}/oauthScopes/{userId}")
+    public Set<OAuthScope> getOAuthScopes(@PathVariable @NotNull String platformName) {
         return platformService.getOAuthScopes(platformName);
     }
 
@@ -60,7 +66,7 @@ public class PlatformController {
     }
 
     @GetMapping("/{platformName}/authorizationUrl")
-    public String getPlatformLogin(@PathVariable @NotNull String platformName, @RequestParam @NotNull List<String> scopes) {
+    public String getPlatformLogin(@PathVariable @NotNull String platformName, @RequestParam @NotNull List<OAuthScope> scopes) {
         Platform platform = platformService.getByName(platformName);
         return platformService.getAuthorizationURL(platform, scopes);
     }
