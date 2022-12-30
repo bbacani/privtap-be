@@ -19,12 +19,12 @@ public class PlatformController {
 
     private final PlatformService platformService;
 
-    @GetMapping("/{platformName}/oauthScopes")
+    @GetMapping("/{platformName}/oauthScopes/{userId}")
     public Set<OAuthScope> getOAuthScopes(@PathVariable @NotNull String platformName, @PathVariable @NotNull String userId) {
         return platformService.getOAuthScopes(platformName, userId);
     }
 
-    @GetMapping("/{platformName}/oauthScopes/{userId}")
+    @GetMapping("/{platformName}/oauthScopes")
     public Set<OAuthScope> getOAuthScopes(@PathVariable @NotNull String platformName) {
         return platformService.getOAuthScopes(platformName);
     }
@@ -72,12 +72,12 @@ public class PlatformController {
     }
 
     @GetMapping("/{platformName}/triggerScopes/{triggerTypeid}")
-    public Set<String> getScopesByTriggerType(@PathVariable @NotNull String platformName, @PathVariable @NotNull String triggerTypeid){
+    public Set<OAuthScope> getScopesByTriggerType(@PathVariable @NotNull String platformName, @PathVariable @NotNull String triggerTypeid){
         return platformService.getTriggerType(platformName,triggerTypeid).getOauthScopes();
     }
 
     @GetMapping("/{platformName}/actionScopes/{actionTypeid}")
-    public Set<String> getScopesByActionType(@PathVariable @NotNull String platformName, @PathVariable @NotNull String actionTypeid){
+    public Set<OAuthScope> getScopesByActionType(@PathVariable @NotNull String platformName, @PathVariable @NotNull String actionTypeid){
         return platformService.getActionType(platformName,actionTypeid).getOauthScopes();
     }
 
