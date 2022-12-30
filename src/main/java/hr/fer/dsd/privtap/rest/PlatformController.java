@@ -64,4 +64,15 @@ public class PlatformController {
         Platform platform = platformService.getByName(platformName);
         return platformService.getAuthorizationURL(platform, scopes);
     }
+
+    @GetMapping("/{platformName}/triggerScopes/{triggerTypeid}")
+    public Set<String> getScopesByTriggerType(@PathVariable @NotNull String platformName, @PathVariable @NotNull String triggerTypeid){
+        return platformService.getTriggerType(platformName,triggerTypeid).getOauthScopes();
+    }
+
+    @GetMapping("/{platformName}/actionScopes/{actionTypeid}")
+    public Set<String> getScopesByActionType(@PathVariable @NotNull String platformName, @PathVariable @NotNull String actionTypeid){
+        return platformService.getActionType(platformName,actionTypeid).getOauthScopes();
+    }
+
 }
