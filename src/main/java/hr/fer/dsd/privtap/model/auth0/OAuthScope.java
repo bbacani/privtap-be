@@ -11,8 +11,6 @@ import org.springframework.data.annotation.Id;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OAuthScope {
-    @Id
-    private String id;
     private String name;
     private String description;
 }
