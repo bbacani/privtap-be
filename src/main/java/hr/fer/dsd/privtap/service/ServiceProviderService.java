@@ -48,6 +48,7 @@ public class ServiceProviderService {
     public Platform registerPlatform(String providerId, Platform platform) {
         platform.setActionTypes(new ArrayList<ActionType>());
         platform.setTriggerTypes(new ArrayList<TriggerType>());
+        platform.setOauthScopes(new HashSet<OAuthScope>());
 
         PlatformEntity entity = PlatformMapper.INSTANCE.toEntity(platform);
         entity = platformRepository.save(entity);
