@@ -29,12 +29,12 @@ public class ServiceProviderService {
 
 
     public Platform getPlatform(String providerId){
-        String platformId = getById(providerId).getPlatformId();
+        String platformId = getByProviderId(providerId).getPlatformId();
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findById(platformId).orElseThrow(NoSuchElementException::new));
     }
 
-    public ServiceProvider getById(String id) {
-        return ServiceProviderMapper.INSTANCE.fromEntity(serviceProviderRepository.findById(id).orElseThrow(NoSuchElementException::new));
+    public ServiceProvider getByProviderId(String providerId) {
+        return ServiceProviderMapper.INSTANCE.fromEntity(serviceProviderRepository.findByProviderId(providerId).orElseThrow(NoSuchElementException::new));
     }
 
     public Platform update(Platform platform) {
@@ -53,7 +53,7 @@ public class ServiceProviderService {
         PlatformEntity entity = PlatformMapper.INSTANCE.toEntity(platform);
         entity = platformRepository.save(entity);
 
-        ServiceProviderEntity provider = ServiceProviderMapper.INSTANCE.toEntity(getById(providerId));
+        ServiceProviderEntity provider = ServiceProviderMapper.INSTANCE.toEntity(getByProviderId(providerId));
         provider.setPlatformId(entity.getId());
         provider = serviceProviderRepository.save(provider);
         return PlatformMapper.INSTANCE.fromEntity(entity);
