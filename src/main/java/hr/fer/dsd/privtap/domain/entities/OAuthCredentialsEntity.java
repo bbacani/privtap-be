@@ -23,7 +23,7 @@ public class OAuthCredentialsEntity {
     private String tokenType;
     private Integer expiresIn;
     private String refreshToken;
-    private Set<OAuthScope> oAuthScopes;
+    private Set<OAuthScope> oauthScopes;
     private Instant createdAt;
     private Instant updatedAt;
 }
