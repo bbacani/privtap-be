@@ -65,8 +65,8 @@ public class PlatformController {
         platformService.getAuthToken(platform, userCode, userId);
     }
 
-    @GetMapping("/{platformName}/authorizationUrl")
-    public String getPlatformLogin(@PathVariable @NotNull String platformName, @RequestParam @NotNull List<OAuthScope> scopes) {
+    @PostMapping("/{platformName}/authorizationUrl")
+    public String getPlatformLogin(@PathVariable @NotNull String platformName, @RequestBody List<OAuthScope> scopes) {
         Platform platform = platformService.getByName(platformName);
         return platformService.getAuthorizationURL(platform, scopes);
     }
