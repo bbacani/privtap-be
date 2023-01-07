@@ -13,6 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OAuthCredentials {
+    private String id;
     private String userId;
     private String platformName;
     private String accessToken;
