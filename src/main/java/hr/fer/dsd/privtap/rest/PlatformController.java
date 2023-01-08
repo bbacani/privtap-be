@@ -28,6 +28,10 @@ public class PlatformController {
     public Set<OAuthScope> getOAuthScopes(@PathVariable @NotNull String platformName) {
         return platformService.getOAuthScopes(platformName);
     }
+    @GetMapping("/{platformName}/unacceptedOauthScopes/{userId}")
+    public Set<OAuthScope> getUnacceptedOAuthScopes(@PathVariable @NotNull String platformName,@PathVariable @NotNull String userId){
+        return platformService.getUnacceptedOAuthScopes(platformName,userId);
+    }
 
     @GetMapping("/{platformName}/allActionTypes")
     public List<ActionType> getActionTypesByPlatform(@PathVariable @NotNull String platformName) {

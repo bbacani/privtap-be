@@ -138,13 +138,19 @@ public class PlatformService {
     public Set<OAuthScope> getOAuthScopes(String platformName) {
         PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
         Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
-
         return platform.getOauthScopes();
     }
 
     public Set<OAuthScope> getOAuthScopes(String platformName, String userId) {
         OAuthCredentials credentials = oAuthCredentialsService.get(userId, platformName);
         return credentials.getOauthScopes();
+    }
+    public Set<OAuthScope> getUnacceptedOAuthScopes(String platformName, String userId){
+        Set<OAuthScope> scopess = getOAuthScopes(platformName);
+        Set<OAuthScope> scopes = getOAuthScopes(platformName).stream().filter(
+                scope -> !getOAuthScopes( platformName, userId).stream().anyMatch(s->scope.equals(s)))
+                .collect(Collectors.toSet());
+        return scopes;
     }
 
     public List<String> getPlatformNames(){
