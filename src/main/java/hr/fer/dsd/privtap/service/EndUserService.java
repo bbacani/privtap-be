@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -62,13 +63,18 @@ public class EndUserService {
         return user;
     }
 
-    public void deleteAutomation(String userId, Automation automation) {
-        var user = getById(userId);
+    public void deleteAutomation(String userId, String automationId) {
+        User user = getById(userId);
+        Automation automation = user.getAutomations().stream().filter(aut ->aut.getId().equals(automationId)).collect(Collectors.toList()).get(0);
+        String actionTypeId= automation.getAction().getTypeId();
+        String triggerTypeId= automation.getTrigger().getTypeId();
         user.getAutomations().remove(automation);
         var entity = UserMapper.INSTANCE.toEntity(user);
         userRepository.save(entity);
-        actionService.delete(automation.getAction().getId());
-        triggerService.delete(automation.getTrigger().getId());
+        if(user.getAutomations().stream().filter(aut->aut.getAction().getTypeId().equals(actionTypeId)).collect(Collectors.toSet()).size()==0)
+            actionService.delete(automation.getAction().getId());
+        if(user.getAutomations().stream().filter(aut->aut.getTrigger().getTypeId().equals(triggerTypeId)).collect(Collectors.toSet()).size()==0)
+            triggerService.delete(automation.getTrigger().getId());
     }
 
     public Set<Automation> getAllAutomations(String userId) {
