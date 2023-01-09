@@ -75,6 +75,17 @@ public class PlatformController {
         return platformService.getAuthorizationURL(platform, scopes);
     }
 
+    @PostMapping("/{platformName}/authorizationUrlNewScopes/{userId}")
+    public String getAuthorizationURLNewScopes(@PathVariable @NotNull String platformName, @PathVariable @NotNull String userId, @RequestBody List<OAuthScope> scopes){
+        Platform platform = platformService.getByName(platformName);
+        return platformService.getAuthorizationURLNewScopes(platform,scopes,userId);
+    }
+    @PostMapping("/{platformName}/authorizationUrlDelScopes/{userId}")
+    public String getAuthorizationURLDelScopes(@PathVariable @NotNull String platformName, @PathVariable @NotNull String userId, @RequestBody List<OAuthScope> scopes){
+        Platform platform = platformService.getByName(platformName);
+        return platformService.getAuthorizationURLRemoveScopes(platform,scopes,userId);
+    }
+
     @GetMapping("/{platformName}/triggerScopes/{triggerTypeid}")
     public Set<OAuthScope> getScopesByTriggerType(@PathVariable @NotNull String platformName, @PathVariable @NotNull String triggerTypeid){
         return platformService.getTriggerType(platformName,triggerTypeid).getOauthScopes();

@@ -85,6 +85,21 @@ public class PlatformService {
                 + (platform.getOauthScopes().isEmpty() ? "" : "&scope=" + String.join(",", oAuthScopes.stream().map(oAuthScope -> oAuthScope.getName()).toList()));
     }
 
+    public String getAuthorizationURLNewScopes(Platform platform, List<OAuthScope> oAuthScopes, String userId){
+        Set<OAuthScope> oldScopes = oAuthCredentialsService.get(userId, platform.getName()).getOauthScopes();
+        oAuthScopes.addAll(oldScopes);
+        oAuthScopes= oAuthScopes.stream().distinct().toList();
+        return getAuthorizationURL(platform,oAuthScopes);
+    }
+
+    public String getAuthorizationURLRemoveScopes(Platform platform, List<OAuthScope> oAuthScopes, String userId){
+        Set<OAuthScope> oldScopes = oAuthCredentialsService.get(userId, platform.getName()).getOauthScopes();
+        for(OAuthScope scope : oAuthScopes)
+            oldScopes = oldScopes.stream().filter(s-> !scope.getName().equals(scope.getName())).collect(Collectors.toSet());
+        oAuthScopes = oldScopes.stream().toList();
+        return getAuthorizationURL(platform,oAuthScopes);
+    }
+
     public void getAuthToken(Platform platform, String code, String userId) {
         MultiValueMap<String, String> bodyValues = new LinkedMultiValueMap<>();
         bodyValues.add("grant_type", "authorization_code");
