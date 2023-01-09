@@ -54,7 +54,7 @@ public class UserController {
         return service.registerAutomation(userId, request);
     }
 
-    //@PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @DeleteMapping("/automation/{userId}/{automationId}")
     public void deleteAutomation(@PathVariable @NotNull String userId, @PathVariable @NotNull String automationId) {
         service.deleteAutomation(userId, automationId);
