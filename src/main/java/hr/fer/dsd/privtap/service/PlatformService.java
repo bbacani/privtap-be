@@ -117,7 +117,9 @@ public class PlatformService {
                             .createdAt(Instant.now())
                             .updatedAt(Instant.now())
                             .build();
-                    oAuthCredentialsService.create(credentials);
+                    if(!oAuthCredentialsService.existsByUserIdAndPlatformName(userId,platform.getName()))
+                        oAuthCredentialsService.create(credentials);
+                    else oAuthCredentialsService.update(credentials);
                 });
         } catch (Exception e) {
             System.out.println(e.getStackTrace());
