@@ -159,8 +159,10 @@ public class PlatformService {
     }
 
     public Set<OAuthScope> getOAuthScopes(String platformName, String userId) {
-        OAuthCredentials credentials = oAuthCredentialsService.get(userId, platformName);
-        return credentials.getOauthScopes();
+        if(oAuthCredentialsService.existsByUserIdAndPlatformName(userId,platformName)) {
+            OAuthCredentials credentials = oAuthCredentialsService.get(userId, platformName);
+            return credentials.getOauthScopes();
+        }else return new HashSet<>();
     }
     public Set<OAuthScope> getUnacceptedOAuthScopes(String platformName, String userId){
         Set<OAuthScope> scopes;
