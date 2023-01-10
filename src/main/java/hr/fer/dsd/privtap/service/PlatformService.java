@@ -147,9 +147,8 @@ public class PlatformService {
     }
 
     private String getRedirectUrl(String platformName) {
-        return "http://localhost:3000/" + platformName + "/successfulLogin";
-//        return "http://localhost:3000/platform/" + platformName + "/authToken";
-//        return "http://localhost:8080/platform/" + platformName + "/authToken";
+//        return "http://localhost:3000/" + platformName + "/successfulLogin";
+        return "http://privtap-bucket.s3-website.eu-central-1.amazonaws.com/" + platformName + "/successfulLogin";
     }
 
     public Set<OAuthScope> getOAuthScopes(String platformName) {
