@@ -29,14 +29,14 @@ public class ServiceProviderController {
         return serviceProviderService.getPlatform(providerId);
     }
 
-    @PostMapping("/{providerId}/actionType")
-    public Platform registerActionType(@PathVariable @NotNull String providerId, @RequestBody ActionType actionType) {
-        return serviceProviderService.registerActionType(providerId, actionType);
+    @PostMapping("/{platformName}/actionType")
+    public Platform registerActionType(@PathVariable @NotNull String platformName, @RequestBody ActionType actionType) {
+        return serviceProviderService.registerActionType(platformName, actionType);
     }
 
-    @PostMapping("/{providerId}/triggerType")
-    public Platform registerTriggerType(@PathVariable @NotNull String providerId, @RequestBody TriggerType triggerType) {
-        return serviceProviderService.registerTriggerType(providerId, triggerType);
+    @PostMapping("/{platformName}/triggerType")
+    public Platform registerTriggerType(@PathVariable @NotNull String platformName, @RequestBody TriggerType triggerType) {
+        return serviceProviderService.registerTriggerType(platformName, triggerType);
     }
 
     // TODO: 08.12.2022. remove this, this is for testing from postman

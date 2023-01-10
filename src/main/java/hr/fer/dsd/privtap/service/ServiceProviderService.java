@@ -33,6 +33,9 @@ public class ServiceProviderService {
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findById(platformId).orElseThrow(NoSuchElementException::new));
     }
 
+    public Platform getPlatformByName(String name){
+        return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
+    }
     public ServiceProvider getByProviderId(String providerId) {
         return ServiceProviderMapper.INSTANCE.fromEntity(serviceProviderRepository.findByProviderId(providerId).orElseThrow(NoSuchElementException::new));
     }
@@ -59,10 +62,10 @@ public class ServiceProviderService {
         return PlatformMapper.INSTANCE.fromEntity(entity);
     }
 
-    public Platform registerTriggerType(String providerId, TriggerType triggerType) {
+    public Platform registerTriggerType(String platformName, TriggerType triggerType) {
         triggerType.setCreatedAt(Instant.now());
         triggerType.setUpdatedAt(Instant.now());
-        Platform platform = getPlatform(providerId);
+        Platform platform = getPlatformByName(platformName);
 
         List<TriggerType> triggerTypes = platform.getTriggerTypes();
         triggerTypes.add(triggerType);
@@ -75,10 +78,10 @@ public class ServiceProviderService {
         return update(platform);
     }
 
-    public Platform registerActionType(String providerId, ActionType actionType) {
+    public Platform registerActionType(String platformName, ActionType actionType) {
         actionType.setCreatedAt(Instant.now());
         actionType.setUpdatedAt(Instant.now());
-        Platform platform = getPlatform(providerId);
+        Platform platform = getPlatformByName(platformName);
 
         List<ActionType> actionTypes = platform.getActionTypes();
         actionTypes.add(actionType);
