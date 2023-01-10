@@ -1,6 +1,9 @@
 package hr.fer.dsd.privtap.security.oauth2;
 
-import hr.fer.dsd.privtap.security.CookieUtils;
+import hr.fer.dsd.privtap.config.AppConfig;
+import hr.fer.dsd.privtap.exception.BadRequestException;
+import hr.fer.dsd.privtap.security.TokenProvider;
+import hr.fer.dsd.privtap.utils.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -13,6 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Optional;
 
 @Slf4j
@@ -20,6 +24,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    private final TokenProvider tokenProvider;
+
+    private final AppConfig appConfig;
 
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
@@ -31,18 +38,26 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             log.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
+
         clearAuthenticationAttributes(request, response);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
-
     }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         Optional<String> redirectUri = CookieUtils.getCookie(request, HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
+//        if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
+//            throw new BadRequestException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
+//        }
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-        return targetUrl;
+
+        String token = tokenProvider.createToken(authentication);
+
+        return UriComponentsBuilder.fromUriString(targetUrl)
+                .queryParam("token", token)
+                .build().toUriString();
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
@@ -50,5 +65,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
     }
 
+    private boolean isAuthorizedRedirectUri(String uri) {
+        URI clientRedirectUri = URI.create(uri);
 
+        return appConfig.getAuthorizedRedirectUris()
+                .stream()
+                .anyMatch(authorizedRedirectUri -> {
+                    // Only validate host and port. Let the clients use different paths if they want to
+                    URI authorizedURI = URI.create(authorizedRedirectUri);
+                    return authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
+                            && authorizedURI.getPort() == clientRedirectUri.getPort();
+                });
+    }
 }

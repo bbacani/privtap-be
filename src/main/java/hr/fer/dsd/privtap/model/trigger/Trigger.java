@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.model.trigger;
 
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +18,12 @@ import java.util.Set;
 public class Trigger {
     private String id;
     private String userId;
+    private String platformName;
     private String name;
     private String typeId;
     private String description;
     private List<RequestField> fields;
+    private Set<OAuthScope> oauthScopes;
     private Instant createdAt;
     private Instant updatedAt;
 }

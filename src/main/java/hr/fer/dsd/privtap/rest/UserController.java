@@ -1,10 +1,16 @@
 package hr.fer.dsd.privtap.rest;
 
+import hr.fer.dsd.privtap.domain.entities.UserEntity;
+import hr.fer.dsd.privtap.domain.repositories.UserRepository;
+import hr.fer.dsd.privtap.exception.ResourceNotFoundException;
 import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
-import hr.fer.dsd.privtap.service.UserService;
+import hr.fer.dsd.privtap.security.CurrentUser;
+import hr.fer.dsd.privtap.service.EndUserService;
 import lombok.AllArgsConstructor;
+import hr.fer.dsd.privtap.security.UserPrincipal;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -16,11 +22,20 @@ import java.util.Set;
 @RequestMapping("/")
 public class UserController {
 
-    private final UserService service;
+    private final UserRepository userRepository;
+
+    private final EndUserService service;
 
     @GetMapping("/")
     public String home() {
         return "Home page!";
+    }
+
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('USER')")
+    public UserEntity getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+        return userRepository.findById(userPrincipal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
     }
 
     @GetMapping("/user/{userId}")
@@ -28,26 +43,23 @@ public class UserController {
         return service.getById(userId);
     }
 
-    @PatchMapping("/")
-    public User update(@RequestBody @NotNull User user) {
-        return service.update(user);
-    }
-
     @GetMapping("/all")
     public List<User> fetchAllUsers() {
         return service.getAllUsers();
     }
 
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @PostMapping("/automation/{userId}")
     public User registerAutomation(@PathVariable @NotNull String userId, @RequestBody AutomationRequest request) {
         return service.registerAutomation(userId, request);
     }
 
-    @DeleteMapping("/automation/{userId}")
-    public void deleteAutomation(@PathVariable @NotNull String userId, @RequestBody Automation automation) {
-        service.deleteAutomation(userId, automation);
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
+    @DeleteMapping("/automation/{userId}/{automationId}")
+    public void deleteAutomation(@PathVariable @NotNull String userId, @PathVariable @NotNull String automationId) {
+        service.deleteAutomation(userId, automationId);
     }
-
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @GetMapping("/automation/{userId}")
     public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
         return service.getAllAutomations(userId);

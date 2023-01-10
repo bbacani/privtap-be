@@ -14,4 +14,3 @@ public interface TriggerRepository extends MongoRepository<TriggerEntity, String
 
     Optional<TriggerEntity> findByTypeIdAndUserId(String typeId, String userId);
 }
-

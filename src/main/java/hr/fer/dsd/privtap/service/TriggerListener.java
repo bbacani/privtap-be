@@ -12,14 +12,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TriggerListener {
 
-    private UserService userService;
+    private EndUserService endUserService;
     private ActionService actionService;
 
 
     @EventListener
     public void onApplicationEvent(TriggerEvent event){
         var userId = event.getTrigger().getUserId();
-        var automations = userService.getAllAutomations(userId);
+        var automations = endUserService.getAllAutomations(userId);
         automations = automations
                 .stream()
                 .filter(a -> a
@@ -35,7 +35,7 @@ public class TriggerListener {
                 for (RequestField actionField : actionFields) {
                     var triggerField = triggerFields
                             .stream()
-                            .filter(requestField -> requestField.getName().equals(actionField.getName()))
+                            .filter(requestField -> requestField.getType().equals(actionField.getType()))
                             .findAny().get();
                     var triggerFieldValue = triggerField.getValue();
                     actionField.setValue(triggerFieldValue);
