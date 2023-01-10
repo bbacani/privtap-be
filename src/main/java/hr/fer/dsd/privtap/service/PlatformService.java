@@ -163,9 +163,12 @@ public class PlatformService {
         return credentials.getOauthScopes();
     }
     public Set<OAuthScope> getUnacceptedOAuthScopes(String platformName, String userId){
-        Set<OAuthScope> scopes = getOAuthScopes(platformName).stream().filter(
-                scope -> !getOAuthScopes( platformName, userId).stream().anyMatch(s->scope.equals(s)))
-                .collect(Collectors.toSet());
+        Set<OAuthScope> scopes;
+        if(oAuthCredentialsService.existsByUserIdAndPlatformName(userId,platformName))
+            scopes = getOAuthScopes(platformName).stream().filter(
+                    scope -> !getOAuthScopes( platformName, userId).stream().anyMatch(s->scope.equals(s)))
+                    .collect(Collectors.toSet());
+        else scopes = getOAuthScopes(platformName);
         return scopes;
     }
 
