@@ -44,11 +44,6 @@ public class UserController {
         return service.getById(userId);
     }
 
-    @PatchMapping("/")
-    public User update(@Valid @RequestBody @NotNull User user) {
-        return service.update(user);
-    }
-
     @GetMapping("/all")
     public List<User> fetchAllUsers() {
         return service.getAllUsers();

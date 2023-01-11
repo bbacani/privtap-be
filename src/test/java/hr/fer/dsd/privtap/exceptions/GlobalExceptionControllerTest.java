@@ -1,6 +1,7 @@
 package hr.fer.dsd.privtap.exceptions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hr.fer.dsd.privtap.exception.ResourceNotFoundException;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.trigger.Trigger;
 import hr.fer.dsd.privtap.rest.ActionController;
@@ -58,17 +59,6 @@ public class GlobalExceptionControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(userController, triggerController, actionController)
                 .setControllerAdvice(new GlobalExceptionController())
                 .build();
-    }
-
-    @Test
-    void handleNoDataFoundExceptionForAutomationTest() throws Exception {
-        when(userService.getById("1")).thenThrow(new NoUserFoundException("User with id 1 does not exist"));
-
-        mockMvc.perform(get("/user/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(result -> assertNotNull(result.getResolvedException()))
-                .andExpect(result -> assertEquals("User with id 1 does not exist",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @Test

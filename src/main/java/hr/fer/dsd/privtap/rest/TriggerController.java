@@ -39,9 +39,9 @@ public class TriggerController {
 
     @PostMapping("/occurrence")
     public void triggerOccurrence(@Valid @RequestBody Trigger trigger) {
-        if(null==trigger.getUserId())
-            for( var user : service.findUserIds(trigger.getTypeId())){
-                trigger.setUserId(user);
+        if(trigger.getUserId() == null) {
+            for (String userId : service.findUserIds(trigger.getTypeId())) {
+                trigger.setUserId(userId);
                 publisher.publishTrigger(trigger);
             }
         } else {
