@@ -157,7 +157,7 @@ public class PlatformService {
         String[] activeProfiles = environment.getActiveProfiles();
         boolean isDevProfile = environment.acceptsProfiles("dev");
         System.out.println(isDevProfile);
-        String redirectUrl = isDevProfile ? "http://privtap-bucket.s3-website.eu-central-1.amazonaws.com/" : "http://localhost:3000/" + platformName + "/successfulLogin";
+        String redirectUrl = (isDevProfile ? "http://privtap-bucket.s3-website.eu-central-1.amazonaws.com/" : "http://localhost:3000/") + platformName + "/successfulLogin";
         return redirectUrl;
     }
 
