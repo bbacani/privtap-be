@@ -11,6 +11,9 @@ import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
 import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,10 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class PlatformService {
+
+    @Autowired
+    private Environment environment;
+
     private final PlatformRepository platformRepository;
     private final OAuthCredentialsService oAuthCredentialsService;
 
@@ -147,8 +154,11 @@ public class PlatformService {
     }
 
     private String getRedirectUrl(String platformName) {
-//        return "http://localhost:3000/" + platformName + "/successfulLogin";
-        return "http://privtap-bucket.s3-website.eu-central-1.amazonaws.com/" + platformName + "/successfulLogin";
+        String[] activeProfiles = environment.getActiveProfiles();
+        boolean isDevProfile = environment.acceptsProfiles("dev");
+        System.out.println(isDevProfile);
+        String redirectUrl = isDevProfile ? "http://privtap-bucket.s3-website.eu-central-1.amazonaws.com/" : "http://localhost:3000/" + platformName + "/successfulLogin";
+        return redirectUrl;
     }
 
     public Set<OAuthScope> getOAuthScopes(String platformName) {
