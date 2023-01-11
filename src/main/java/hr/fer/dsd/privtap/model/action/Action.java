@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
@@ -17,10 +19,15 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Action implements Serializable {
+    @Id
     private String id;
+    @NotNull
     private String userId;
+    @NotNull
     private String platformName;
+    @NotNull
     private String name;
+    @NotNull
     private String typeId;
     private String description;
     private String url;
@@ -29,5 +36,3 @@ public class Action implements Serializable {
     private Instant createdAt;
     private Instant updatedAt;
 }
-
-

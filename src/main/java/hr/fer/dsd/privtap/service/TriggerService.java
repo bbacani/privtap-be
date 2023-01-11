@@ -44,7 +44,7 @@ public class TriggerService {
         triggerRepository.delete(entity);
     }
 
-    public Trigger get(String id) {
+    public Trigger findById(String id) {
         return TriggerMapper.INSTANCE.fromEntity(triggerRepository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 

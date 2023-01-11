@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,9 @@ import java.util.Set;
 public class TriggerType {
     @Id
     private String id;
+    @NotNull
     private String platformName;
+    @NotNull
     private String name;
     private String description;
     private List<RequestField> requestFields;

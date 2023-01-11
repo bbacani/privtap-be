@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Data
@@ -14,10 +16,14 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Automation {
+    @Id
     private String id;
+    @NotNull(message = "name can not be null")
     private String name;
     private String description;
+    @NotNull(message = "trigger can not be null")
     private Trigger trigger;
+    @NotNull(message = "action can not be null")
     private Action action;
 
     @Override

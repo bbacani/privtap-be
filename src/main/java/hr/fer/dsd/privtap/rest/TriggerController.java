@@ -6,6 +6,7 @@ import hr.fer.dsd.privtap.service.TriggerService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -17,18 +18,18 @@ public class TriggerController {
     private final TriggerService service;
     private final TriggerPublisher publisher;
     @PostMapping
-    public Trigger registerTrigger(@RequestBody Trigger trigger) {
+    public Trigger registerTrigger(@Valid @RequestBody Trigger trigger) {
         return service.activateTrigger(trigger);
     }
 
     @PatchMapping("/{triggerId}")
-    public Trigger updateTrigger(@PathVariable @NotNull String triggerId, @RequestBody Trigger trigger) {
+    public Trigger updateTrigger(@PathVariable @NotNull String triggerId, @Valid @RequestBody Trigger trigger) {
         return service.update(triggerId, trigger);
     }
 
     @GetMapping("/{triggerId}")
     public Trigger getTrigger(@PathVariable @NotNull String triggerId) {
-        return service.get(triggerId);
+        return service.findById(triggerId);
     }
 
     @GetMapping
@@ -37,7 +38,7 @@ public class TriggerController {
     }
 
     @PostMapping("/occurrence")
-    public void triggerOccurrence(@RequestBody Trigger trigger) {
+    public void triggerOccurrence(@Valid @RequestBody Trigger trigger) {
         if(trigger.getUserId() == null) {
             for (String userId : service.findUserIds(trigger.getTypeId())) {
                 trigger.setUserId(userId);

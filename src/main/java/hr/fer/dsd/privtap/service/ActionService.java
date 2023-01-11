@@ -47,7 +47,7 @@ public class ActionService {
         actionRepository.delete(entity);
     }
 
-    public Action get(String id) {
+    public Action findById(String id) {
         return ActionMapper.INSTANCE.fromEntity(actionRepository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 

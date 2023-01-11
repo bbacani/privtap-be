@@ -13,6 +13,7 @@ import hr.fer.dsd.privtap.security.UserPrincipal;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @PostMapping("/automation/{userId}")
-    public User registerAutomation(@PathVariable @NotNull String userId, @RequestBody AutomationRequest request) {
+    public User registerAutomation(@PathVariable @NotNull String userId, @Valid @RequestBody AutomationRequest request) {
         return service.registerAutomation(userId, request);
     }
 
@@ -58,7 +59,9 @@ public class UserController {
     @DeleteMapping("/automation/{userId}/{automationId}")
     public void deleteAutomation(@PathVariable @NotNull String userId, @PathVariable @NotNull String automationId) {
         service.deleteAutomation(userId, automationId);
+
     }
+    
     @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @GetMapping("/automation/{userId}")
     public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
