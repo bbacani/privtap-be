@@ -13,9 +13,9 @@ public interface OAuthCredentialsMapper {
 
     OAuthCredentialsMapper INSTANCE = Mappers.getMapper(OAuthCredentialsMapper.class);
 
-    OAuthCredentials fromEntity(OAuthCredentialsEntity platform);
+    OAuthCredentials fromEntity(OAuthCredentialsEntity entity);
 
     OAuthCredentialsEntity toEntity(OAuthCredentials model);
 
-    OAuthCredentialsEntity updateEntity(@MappingTarget OAuthCredentialsEntity entity, OAuthCredentials platform);
+    OAuthCredentialsEntity updateEntity(@MappingTarget OAuthCredentialsEntity entity, OAuthCredentials model);
 }

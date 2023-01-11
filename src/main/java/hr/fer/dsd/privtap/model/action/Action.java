@@ -1,5 +1,6 @@
 package hr.fer.dsd.privtap.model.action;
 
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.requestField.RequestField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +32,7 @@ public class Action implements Serializable {
     private String description;
     private String url;
     private List<RequestField> fields;
-    private Set<String> oauthScopes;
+    private Set<OAuthScope> oauthScopes;
     private Instant createdAt;
     private Instant updatedAt;
 }

@@ -44,6 +44,8 @@ public class TriggerController {
                 trigger.setUserId(user);
                 publisher.publishTrigger(trigger);
             }
-        else  publisher.publishTrigger(trigger);
+        } else {
+            publisher.publishTrigger(trigger);
+        }
     }
 }

@@ -1,17 +1,19 @@
 package hr.fer.dsd.privtap.service;
 
 import hr.fer.dsd.privtap.domain.entities.PlatformEntity;
-import hr.fer.dsd.privtap.domain.repositories.OAuthCredentialsRepository;
 import hr.fer.dsd.privtap.domain.repositories.PlatformRepository;
 import hr.fer.dsd.privtap.model.action.Action;
 import hr.fer.dsd.privtap.model.auth0.OAuthCredentials;
 import hr.fer.dsd.privtap.model.action.ActionType;
+import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.auth0.OAuthTokensResponse;
-import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
 import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -23,10 +25,15 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.net.URI;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PlatformService {
+
+    @Autowired
+    private Environment environment;
+
     private final PlatformRepository platformRepository;
     private final OAuthCredentialsService oAuthCredentialsService;
 
@@ -34,38 +41,36 @@ public class PlatformService {
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
     }
 
-    public void save(PlatformEntity platformEntity){
-        platformRepository.save(platformEntity);
+    public List<ActionType> getActionTypesByPlatform(String name) {
+        return getByName(name).getActionTypes();
+    }
+    public List<TriggerType> getTriggerTypesByPlatform(String name) {
+        return getByName(name).getTriggerTypes();
     }
 
-    public Platform update(Platform platform) {
-        PlatformEntity entity = platformRepository.findByName(platform.getName()).orElseThrow(NoSuchElementException::new);
-        PlatformEntity updatedEntity = PlatformMapper.INSTANCE.updateEntity(entity, platform);
-        platformRepository.save(updatedEntity);
-        return PlatformMapper.INSTANCE.fromEntity(updatedEntity);
+    public List<String> getAllTriggerPlatforms() {
+        return platformRepository
+                .findAll()
+                .stream()
+                .filter(platformEntity -> !platformEntity.getTriggerTypes().isEmpty())
+                .map(platformEntity -> platformEntity.getName())
+                .toList();
     }
 
-    public Platform create(Platform platform) {
-        platform.setActions(new ArrayList<ActionType>());
-        platform.setTriggers(new ArrayList<TriggerType>());
-        platform.setOauthScopes(new HashSet<String>());
-
-        PlatformEntity entity = PlatformMapper.INSTANCE.toEntity(platform);
-        save(entity);
-        return PlatformMapper.INSTANCE.fromEntity(entity);
+    public List<String> getAllActionPlatforms() {
+        return platformRepository
+                .findAll()
+                .stream()
+                .filter(platformEntity ->
+                        !platformEntity.getActionTypes().isEmpty()
+                )
+                .map(platformEntity -> platformEntity.getName())
+                .toList();
     }
-
-    public List<ActionType> getAllActions(String name) {
-        return getByName(name).getActions();
-    }
-
-    public List<TriggerType> getAllTriggers(String name) {
-        return getByName(name).getTriggers();
-    }
-
+  
     public ActionType getActionType(String platformName, String id) {
         return getByName(platformName)
-                .getActions()
+                .getActionTypes()
                 .stream()
                 .filter(actionType -> actionType.getId().equals(id))
                 .findAny()
@@ -74,21 +79,35 @@ public class PlatformService {
 
     public TriggerType getTriggerType(String platformName, String id) {
         return getByName(platformName)
-                .getTriggers()
+                .getTriggerTypes()
                 .stream()
                 .filter(triggerType -> triggerType.getId().equals(id))
                 .findAny()
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    public String getAuthorizationURL(Platform platform) {
+    public String getAuthorizationURL(Platform platform, List<OAuthScope> oAuthScopes) {
         return platform.getOauthUrl() + "?client_id=" + platform.getClientId()
                 + "&response_type=code&redirect_uri=" + getRedirectUrl(platform.getName())
-                + (platform.getOauthScopes().isEmpty() ? "" : "&scope=" + String.join(",", platform.getOauthScopes()));
-
+                + (platform.getOauthScopes().isEmpty() ? "" : "&scope=" + String.join(",", oAuthScopes.stream().map(oAuthScope -> oAuthScope.getName()).toList()));
     }
 
-    public void getAuthToken(Platform platform, String code) {
+    public String getAuthorizationURLNewScopes(Platform platform, List<OAuthScope> oAuthScopes, String userId){
+        Set<OAuthScope> oldScopes = oAuthCredentialsService.get(userId, platform.getName()).getOauthScopes();
+        oAuthScopes.addAll(oldScopes);
+        oAuthScopes= oAuthScopes.stream().distinct().toList();
+        return getAuthorizationURL(platform,oAuthScopes);
+    }
+
+    public String getAuthorizationURLRemoveScopes(Platform platform, List<OAuthScope> oAuthScopes, String userId){
+        Set<OAuthScope> oldScopes = oAuthCredentialsService.get(userId, platform.getName()).getOauthScopes();
+        for(OAuthScope scope : oAuthScopes)
+            oldScopes = oldScopes.stream().filter(s-> !scope.getName().equals(scope.getName())).collect(Collectors.toSet());
+        oAuthScopes = oldScopes.stream().toList();
+        return getAuthorizationURL(platform,oAuthScopes);
+    }
+
+    public void getAuthToken(Platform platform, String code, String userId) {
         MultiValueMap<String, String> bodyValues = new LinkedMultiValueMap<>();
         bodyValues.add("grant_type", "authorization_code");
         bodyValues.add("code", code);
@@ -108,73 +127,71 @@ public class PlatformService {
                     .block()
                 .toEntity(OAuthTokensResponse.class)
                 .subscribe(response -> {
+
                     OAuthCredentials credentials = OAuthCredentials.builder()
+                            .userId(userId)
                             .platformName(platform.getName())
                             .accessToken(response.getBody().getAccess_token())
                             .refreshToken(response.getBody().getRefresh_token())
                             .tokenType(response.getBody().getToken_type())
                             .expiresIn(response.getBody().getExpires_in())
-                            .scope(response.getBody().getScope())
+                            .oauthScopes(getScopesFromScopeNames(platform, response.getBody().getScope()))
                             .createdAt(Instant.now())
                             .updatedAt(Instant.now())
                             .build();
-                    oAuthCredentialsService.create(credentials);
+                    if(!oAuthCredentialsService.existsByUserIdAndPlatformName(userId,platform.getName()))
+                        oAuthCredentialsService.create(credentials);
+                    else oAuthCredentialsService.update(credentials);
                 });
         } catch (Exception e) {
             System.out.println(e.getStackTrace());
         }
     }
 
+    private Set<OAuthScope> getScopesFromScopeNames(Platform platform, String oAuthScopeNamesRaw) {
+        List<String> oAuthScopeNames = Arrays.stream(oAuthScopeNamesRaw.split(",")).toList();
+        return platform.getOauthScopes().stream().filter(oAuthScope -> oAuthScopeNames.contains(oAuthScope.getName())).collect(Collectors.toSet());
+    }
+
     private String getRedirectUrl(String platformName) {
-        return "http://localhost:8080/platform/" + platformName + "/getCode";
+        String[] activeProfiles = environment.getActiveProfiles();
+        boolean isDevProfile = environment.acceptsProfiles("dev");
+        System.out.println(isDevProfile);
+        String redirectUrl = (isDevProfile ? "http://privtap-bucket.s3-website.eu-central-1.amazonaws.com/" : "http://localhost:3000/") + platformName + "/successfulLogin";
+        return redirectUrl;
     }
 
-    public Platform registerTriggerType(String platformName, TriggerType triggerType) {
-        triggerType.setCreatedAt(Instant.now());
-        triggerType.setUpdatedAt(Instant.now());
+    public Set<OAuthScope> getOAuthScopes(String platformName) {
         PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
         Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
-
-        List<TriggerType> triggerTypes = platform.getTriggers();
-        triggerTypes.add(triggerType);
-        platform.setTriggers(triggerTypes);
-
-        Set<String> oauthScopes = platform.getOauthScopes();
-        oauthScopes.addAll(triggerType.getOauthScopes());
-        platform.setOauthScopes(oauthScopes);
-
-        return update(platform);
-    }
-
-    public Platform registerActionType(String platformName, ActionType actionType) {
-        actionType.setCreatedAt(Instant.now());
-        actionType.setUpdatedAt(Instant.now());
-        PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
-        Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
-
-        List<ActionType> actionTypes = platform.getActions();
-        actionTypes.add(actionType);
-        platform.setActions(actionTypes);
-
-        Set<String> oauthScopes = platform.getOauthScopes();
-        oauthScopes.addAll(actionType.getOauthScopes());
-        platform.setOauthScopes(oauthScopes);
-
-        return update(platform);
-    }
-
-    public Set<String> getOAuthScopes(String platformName) {
-        PlatformEntity entity = platformRepository.findByName(platformName).orElseThrow(NoSuchElementException::new);
-        Platform platform = PlatformMapper.INSTANCE.fromEntity(entity);
-
         return platform.getOauthScopes();
+    }
+
+    public Set<OAuthScope> getOAuthScopes(String platformName, String userId) {
+        if(oAuthCredentialsService.existsByUserIdAndPlatformName(userId,platformName)) {
+            OAuthCredentials credentials = oAuthCredentialsService.get(userId, platformName);
+            return credentials.getOauthScopes();
+        }else return new HashSet<>();
+    }
+    public Set<OAuthScope> getUnacceptedOAuthScopes(String platformName, String userId){
+        Set<OAuthScope> scopes;
+        if(oAuthCredentialsService.existsByUserIdAndPlatformName(userId,platformName))
+            scopes = getOAuthScopes(platformName).stream().filter(
+                    scope -> !getOAuthScopes( platformName, userId).stream().anyMatch(s->scope.equals(s)))
+                    .collect(Collectors.toSet());
+        else scopes = getOAuthScopes(platformName);
+        return scopes;
+    }
+
+    public List<String> getPlatformNames(){
+        return platformRepository.findAll().stream().map(platform -> platform.getName()).toList();
     }
 
     // TODO: 08.12.2022. remove this, this is just mock for action
     ActionService actionService;
 
     public void callAction() {
-        Action action = actionService.createFromType(getAllActions("spotify").get(0), "1");
+        Action action = actionService.createFromType(getActionTypesByPlatform("spotify").get(0), "1");
         actionService.handler(action);
     }
 }

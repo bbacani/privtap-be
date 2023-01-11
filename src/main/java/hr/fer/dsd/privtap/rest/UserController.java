@@ -7,9 +7,9 @@ import hr.fer.dsd.privtap.model.automation.Automation;
 import hr.fer.dsd.privtap.model.automation.AutomationRequest;
 import hr.fer.dsd.privtap.model.user.User;
 import hr.fer.dsd.privtap.security.CurrentUser;
+import hr.fer.dsd.privtap.service.EndUserService;
 import lombok.AllArgsConstructor;
 import hr.fer.dsd.privtap.security.UserPrincipal;
-import hr.fer.dsd.privtap.service.UserServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +25,7 @@ public class UserController {
 
     private final UserRepository userRepository;
 
-    private final UserServiceImpl service;
+    private final EndUserService service;
 
     @GetMapping("/")
     public String home() {
@@ -54,16 +54,20 @@ public class UserController {
         return service.getAllUsers();
     }
 
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @PostMapping("/automation/{userId}")
     public User registerAutomation(@PathVariable @NotNull String userId, @Valid @RequestBody AutomationRequest request) {
         return service.registerAutomation(userId, request);
     }
 
-    @DeleteMapping("/automation/{userId}")
-    public void deleteAutomation(@PathVariable @NotNull String userId, @Valid @RequestBody Automation automation) {
-        service.deleteAutomation(userId, automation);
-    }
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
+    @DeleteMapping("/automation/{userId}/{automationId}")
+    public void deleteAutomation(@PathVariable @NotNull String userId, @PathVariable @NotNull String automationId) {
+        service.deleteAutomation(userId, automationId);
 
+    }
+    
+    @PreAuthorize("hasRole('USER') and principal.getId().equals(#userId)")
     @GetMapping("/automation/{userId}")
     public Set<Automation> getAllAutomations(@PathVariable @NotNull String userId) {
         return service.getAllAutomations(userId);
