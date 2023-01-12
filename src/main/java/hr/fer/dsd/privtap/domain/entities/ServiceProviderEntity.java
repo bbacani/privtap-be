@@ -17,13 +17,7 @@ public class ServiceProviderEntity {
 
     @Id
     private String id;
-    private String username;
     private String email;
-    private Boolean emailVerified = false;
-    private String imageUrl;
-    @JsonIgnore
-    private String password = null;
-    private AuthProvider provider;
-    private String providerId;
+    private String password;
     private String platformId;
 }
