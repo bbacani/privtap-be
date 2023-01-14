@@ -24,7 +24,6 @@ public class TriggerService {
         var entity = TriggerMapper.INSTANCE.toEntity(trigger);
         entity.setCreatedAt(Instant.now());
         entity.setUpdatedAt(Instant.now());
-
         var savedEntity = triggerRepository.save(entity);
         return TriggerMapper.INSTANCE.fromEntity(savedEntity);
     }
@@ -62,20 +61,20 @@ public class TriggerService {
 
     public Trigger getByTypeAndUser(String triggerType, String userId) {
         return TriggerMapper.INSTANCE.fromEntity(
-                triggerRepository.findByTypeIdAndUserId(triggerType,userId).orElseThrow(NoSuchElementException::new));
+                triggerRepository.findByTypeIdAndUserId(triggerType, userId).orElseThrow(NoSuchElementException::new));
     }
 
     public boolean existsByTypeIdAndUserId(String typeId, String userId) {
-        return triggerRepository.findByTypeIdAndUserId(typeId,userId).isPresent();
+        return triggerRepository.findByTypeIdAndUserId(typeId, userId).isPresent();
     }
 
     public Trigger createFromType(TriggerType triggerType, String userId) {
         var fieldsList = new ArrayList<RequestField>();
-        for(RequestField field : triggerType.getRequestFields()){
-            fieldsList.add(field);
-        }
+        System.out.println(triggerType.getPlatformName());
+
         Trigger trigger = Trigger.builder()
                 .userId(userId)
+                .platformName(triggerType.getPlatformName())
                 .name(triggerType.getName())
                 .typeId(triggerType.getId())
                 .description(triggerType.getDescription())
