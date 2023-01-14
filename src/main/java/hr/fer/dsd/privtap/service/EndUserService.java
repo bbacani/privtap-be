@@ -40,10 +40,10 @@ public class EndUserService {
         Action action = new Action();
         Trigger trigger = new Trigger();
         User user = getById(userId);
-        if(!actionService.existsByTypeIdAndUserId(actionType.getId(), userId))
-            action = actionService.createFromType(actionType,userId);
+        if (!actionService.existsByTypeIdAndUserId(actionType.getId(), userId))
+            action = actionService.createFromType(actionType, userId);
         else action = actionService.getByTypeAndUser(actionType.getId(), userId);
-        if(!triggerService.existsByTypeIdAndUserId(triggerType.getId(), userId))
+        if (!triggerService.existsByTypeIdAndUserId(triggerType.getId(), userId))
             trigger = triggerService.createFromType(triggerType, userId);
         else trigger = triggerService.getByTypeAndUser(triggerType.getId(), userId);
 
@@ -65,15 +65,15 @@ public class EndUserService {
 
     public void deleteAutomation(String userId, String automationId) {
         User user = getById(userId);
-        Automation automation = user.getAutomations().stream().filter(aut ->aut.getId().equals(automationId)).collect(Collectors.toList()).get(0);
-        String actionTypeId= automation.getAction().getTypeId();
-        String triggerTypeId= automation.getTrigger().getTypeId();
+        Automation automation = user.getAutomations().stream().filter(aut -> aut.getId().equals(automationId)).collect(Collectors.toList()).get(0);
+        String actionTypeId = automation.getAction().getTypeId();
+        String triggerTypeId = automation.getTrigger().getTypeId();
         user.getAutomations().remove(automation);
         var entity = UserMapper.INSTANCE.toEntity(user);
         userRepository.save(entity);
-        if(user.getAutomations().stream().filter(aut->aut.getAction().getTypeId().equals(actionTypeId)).collect(Collectors.toSet()).size()==0)
+        if (user.getAutomations().stream().filter(aut -> aut.getAction().getTypeId().equals(actionTypeId)).collect(Collectors.toSet()).size() == 0)
             actionService.delete(automation.getAction().getId());
-        if(user.getAutomations().stream().filter(aut->aut.getTrigger().getTypeId().equals(triggerTypeId)).collect(Collectors.toSet()).size()==0)
+        if (user.getAutomations().stream().filter(aut -> aut.getTrigger().getTypeId().equals(triggerTypeId)).collect(Collectors.toSet()).size() == 0)
             triggerService.delete(automation.getTrigger().getId());
     }
 

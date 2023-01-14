@@ -62,10 +62,7 @@ public class ActionService {
 
     public Action createFromType(ActionType actionType, String userId) {
         var fieldsList = new ArrayList<RequestField>();
-        // TODO: 08.12.2022. check this
-        for(RequestField field : actionType.getRequestFields()){
-            fieldsList.add(field);
-        }
+
         Action action = Action.builder()
                 .userId(userId)
                 .platformName(actionType.getPlatformName())

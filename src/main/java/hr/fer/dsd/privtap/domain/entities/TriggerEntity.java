@@ -21,6 +21,7 @@ public class TriggerEntity {
     @Id
     private String id;
     private String userId;
+    private String platformName;
     private String name;
     private String typeId;
     private String description;
