@@ -1,17 +1,17 @@
 package hr.fer.dsd.privtap.model.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
+import org.springframework.data.annotation.Id;
 
 @Data
-@SuperBuilder (toBuilder = true)
-@EqualsAndHashCode(callSuper = true)
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ServiceProvider extends GenericUser {
+public class ServiceProvider {
 
+    @Id
+    private String id;
+    private String email;
+    private String password;
     private String platformId;
 }

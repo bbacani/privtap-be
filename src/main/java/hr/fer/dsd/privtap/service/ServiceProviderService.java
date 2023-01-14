@@ -9,9 +9,12 @@ import hr.fer.dsd.privtap.model.auth0.OAuthScope;
 import hr.fer.dsd.privtap.model.trigger.TriggerType;
 import hr.fer.dsd.privtap.model.user.Platform;
 import hr.fer.dsd.privtap.model.user.ServiceProvider;
+import hr.fer.dsd.privtap.model.user.ServiceProviderLogin;
 import hr.fer.dsd.privtap.utils.mappers.PlatformMapper;
 import hr.fer.dsd.privtap.utils.mappers.ServiceProviderMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -28,16 +31,16 @@ public class ServiceProviderService {
     private final OAuthCredentialsService oAuthCredentialsService;
 
 
-    public Platform getPlatform(String providerId){
-        String platformId = getByProviderId(providerId).getPlatformId();
+    public Platform getPlatform(String id){
+        String platformId = getById(id).getPlatformId();
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findById(platformId).orElseThrow(NoSuchElementException::new));
     }
 
     public Platform getPlatformByName(String name){
         return PlatformMapper.INSTANCE.fromEntity(platformRepository.findByName(name).orElseThrow(NoSuchElementException::new));
     }
-    public ServiceProvider getByProviderId(String providerId) {
-        return ServiceProviderMapper.INSTANCE.fromEntity(serviceProviderRepository.findByProviderId(providerId).orElseThrow(NoSuchElementException::new));
+    public ServiceProvider getById(String id) {
+        return ServiceProviderMapper.INSTANCE.fromEntity(serviceProviderRepository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 
     public Platform update(Platform platform) {
@@ -48,7 +51,7 @@ public class ServiceProviderService {
     }
 
 
-    public Platform registerPlatform(String providerId, Platform platform) {
+    public Platform registerPlatform(String id, Platform platform) {
         platform.setActionTypes(new ArrayList<ActionType>());
         platform.setTriggerTypes(new ArrayList<TriggerType>());
         platform.setOauthScopes(new HashSet<OAuthScope>());
@@ -56,7 +59,7 @@ public class ServiceProviderService {
         PlatformEntity entity = PlatformMapper.INSTANCE.toEntity(platform);
         entity = platformRepository.save(entity);
 
-        ServiceProviderEntity provider = ServiceProviderMapper.INSTANCE.toEntity(getByProviderId(providerId));
+        ServiceProviderEntity provider = ServiceProviderMapper.INSTANCE.toEntity(getById(id));
         provider.setPlatformId(entity.getId());
         provider = serviceProviderRepository.save(provider);
         return PlatformMapper.INSTANCE.fromEntity(entity);
@@ -92,5 +95,30 @@ public class ServiceProviderService {
         platform.setOauthScopes(oauthScopes);
 
         return update(platform);
+    }
+
+    public ResponseEntity<?> login(ServiceProviderLogin loginData) {
+        Optional<ServiceProviderEntity> entity = serviceProviderRepository.findByEmail(loginData.getEmail());
+        if (entity == null || entity.isEmpty()) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        } else if (!loginData.getPassword().equals(entity.get().getPassword())) {
+            return new ResponseEntity<>("Invalid password", HttpStatus.UNAUTHORIZED);
+        } else {
+            ServiceProvider provider = ServiceProviderMapper.INSTANCE.fromEntity(entity.get());
+            return new ResponseEntity<>(provider, HttpStatus.OK);
+        }
+    }
+
+    public ResponseEntity<?> registerServiceProvider(ServiceProviderLogin registerData) {
+        if (serviceProviderRepository.findByEmail(registerData.getEmail()) == null) {
+            return new ResponseEntity<>("Email already exists", HttpStatus.BAD_REQUEST);
+        }
+        ServiceProvider provider = ServiceProvider.builder()
+                .email(registerData.getEmail())
+                .password(registerData.getPassword())
+                .platformId(null)
+                .build();
+        ServiceProviderEntity savedEntity = serviceProviderRepository.save(ServiceProviderMapper.INSTANCE.toEntity(provider));
+        return new ResponseEntity<>(savedEntity, HttpStatus.OK);
     }
 }
